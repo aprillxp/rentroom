@@ -21,7 +21,7 @@ func UserRegister(db *gorm.DB) http.HandlerFunc {
 		}
 		req.Username = strings.ToLower(req.Username)
 		req.Email = strings.ToLower(req.Email)
-		if req.Username == "" || req.Password == "" || req.Email == "" || req.Phone == "" || req.BankName == 0 || req.BankNumber == 0 || req.IsTenant == 0 {
+		if req.Username == "" || req.Password == "" || req.Email == "" || req.Phone == "" || req.BankID == 0 || req.BankNumber == 0 || req.IsTenant == 0 {
 			utils.JSONError(w, "all fields required", http.StatusBadRequest)
 			return
 		}
@@ -60,7 +60,7 @@ func UserRegister(db *gorm.DB) http.HandlerFunc {
 			Username:   req.Username,
 			Email:      req.Email,
 			Password:   hashedPassword,
-			BankName:   req.BankName,
+			BankID:     req.BankID,
 			BankNumber: req.BankNumber,
 			IsTenant:   req.IsTenant,
 			Phone:      phone,

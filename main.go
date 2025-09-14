@@ -20,6 +20,10 @@ func main() {
 	}
 	config.ConnectDatabase()
 	config.DB.AutoMigrate(&models.User{})
+	config.DB.AutoMigrate(&models.Bank{})
+	config.DB.AutoMigrate(&models.Country{})
+	config.DB.AutoMigrate(&models.Amenity{})
+	config.DB.AutoMigrate(&models.Property{})
 	utils.InitRedis()
 	r := mux.NewRouter()
 
