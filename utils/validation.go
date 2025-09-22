@@ -61,6 +61,17 @@ func UserIsTenant(db *gorm.DB, userID int) error {
 	return nil
 }
 
+func PropertyUserChecker(db *gorm.DB, userID, propertyID int) error {
+	var userProperty models.UserProperties
+	err := db.
+		Where("user_id = ? AND property_id = ?", userID, propertyID).
+		First(&userProperty).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("property under tenant does not exist")
+	}
+	return err
+}
+
 func PasswordValidator(password string) error {
 	if len(password) < 8 {
 		return errors.New("password must be at least 8 characters")

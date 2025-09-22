@@ -19,11 +19,16 @@ func main() {
 		log.Println("No .env file found")
 	}
 	config.ConnectDatabase()
-	config.DB.AutoMigrate(&models.User{})
-	config.DB.AutoMigrate(&models.Bank{})
-	config.DB.AutoMigrate(&models.Country{})
-	config.DB.AutoMigrate(&models.Amenity{})
-	config.DB.AutoMigrate(&models.Property{})
+	config.DB.AutoMigrate(
+		&models.User{},
+		&models.Bank{},
+		&models.Country{},
+		&models.Amenity{},
+		&models.Amenity{},
+		&models.Property{},
+		&models.UserProperties{},
+	)
+
 	utils.InitRedis()
 	r := mux.NewRouter()
 

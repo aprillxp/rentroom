@@ -21,3 +21,6 @@ func UserLogout() http.HandlerFunc {
 func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 	return property.PropertyCreate(db)
 }
+func PropertyDelete(db *gorm.DB) http.HandlerFunc {
+	return property.PropertyDelete(db)
+}
