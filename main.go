@@ -24,11 +24,10 @@ func main() {
 		&models.Bank{},
 		&models.Country{},
 		&models.Amenity{},
-		&models.Amenity{},
 		&models.Property{},
 		&models.UserProperties{},
 	)
-
+	utils.SeedInitialData(config.DB)
 	utils.InitRedis()
 	r := mux.NewRouter()
 
