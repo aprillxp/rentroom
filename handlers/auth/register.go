@@ -2,7 +2,6 @@ package auth
 
 import (
 	"net/http"
-	"regexp"
 	"rentroom/models"
 	"rentroom/utils"
 	"strings"
@@ -13,7 +12,7 @@ import (
 func UserRegister(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
-		var req models.User
+		var req models.UserRegisterRequest
 		err := utils.BodyChecker(r, &req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
@@ -21,27 +20,19 @@ func UserRegister(db *gorm.DB) http.HandlerFunc {
 		}
 		req.Username = strings.ToLower(req.Username)
 		req.Email = strings.ToLower(req.Email)
-		if req.Username == "" || req.Password == "" || req.Email == "" || req.Phone == "" || req.BankID == 0 || req.BankNumber == 0 || req.IsTenant == 0 {
-			utils.JSONError(w, "all fields required", http.StatusBadRequest)
+		err = utils.FieldChecker(req)
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		if len(req.Password) < 8 {
-			utils.JSONError(w, "password must be at least 8 chars", http.StatusBadRequest)
+		err = utils.PasswordValidator(req.Password)
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		phone := utils.NormalizePhone(req.Phone)
-		uppercase := regexp.MustCompile(`[A-Z]`)
-		number := regexp.MustCompile(`[0-9]`)
-		if !uppercase.MatchString(req.Password) {
-			utils.JSONError(w, "password must contain at least one uppercase letter", http.StatusBadRequest)
-			return
-		}
-		if !number.MatchString(req.Password) {
-			utils.JSONError(w, "password must contain at least one number", http.StatusBadRequest)
-			return
-		}
-		if !strings.Contains(req.Email, "@") {
-			utils.JSONError(w, "email must contain @ symbol", http.StatusBadRequest)
+		err = utils.PhoneValidator(req.Phone)
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		err = utils.UserUniqueness(db, req.Username, req.Email, req.Phone)
@@ -59,11 +50,11 @@ func UserRegister(db *gorm.DB) http.HandlerFunc {
 		user := models.User{
 			Username:   req.Username,
 			Email:      req.Email,
+			Phone:      req.Phone,
 			Password:   hashedPassword,
 			BankID:     req.BankID,
 			BankNumber: req.BankNumber,
 			IsTenant:   req.IsTenant,
-			Phone:      phone,
 		}
 		err = db.Create(&user).Error
 		if err != nil {

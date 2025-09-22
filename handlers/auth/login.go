@@ -23,8 +23,9 @@ func UserLogin(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		req.Identifier = strings.ToLower(req.Identifier)
-		if req.Identifier == "" || req.Password == "" {
-			utils.JSONError(w, "username, email, or phone and password required", http.StatusBadRequest)
+		err = utils.FieldChecker(req)
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 

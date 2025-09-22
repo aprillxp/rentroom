@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	auth "rentroom/handlers/auth"
+	property "rentroom/handlers/properties"
 
 	"gorm.io/gorm"
 )
@@ -10,7 +11,13 @@ import (
 func UserRegister(db *gorm.DB) http.HandlerFunc {
 	return auth.UserRegister(db)
 }
-
 func UserLogin(db *gorm.DB) http.HandlerFunc {
 	return auth.UserLogin(db)
+}
+func UserLogout() http.HandlerFunc {
+	return auth.UserLogout()
+}
+
+func PropertyCreate(db *gorm.DB) http.HandlerFunc {
+	return property.PropertyCreate(db)
 }

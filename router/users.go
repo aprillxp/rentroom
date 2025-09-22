@@ -7,7 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func UserRoutes(r *mux.Router, db *gorm.DB) {
+func RegisterUserRoutes(r *mux.Router, db *gorm.DB) {
 	r.HandleFunc("/api/register", handlers.UserRegister(db)).Methods("POST")
 	r.HandleFunc("/api/login", handlers.UserLogin(db)).Methods("POST")
+	r.HandleFunc("/api/logout", handlers.UserLogout()).Methods("POST")
 }

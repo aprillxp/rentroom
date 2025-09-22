@@ -27,7 +27,8 @@ func main() {
 	utils.InitRedis()
 	r := mux.NewRouter()
 
-	router.UserRoutes(r, config.DB)
+	router.RegisterUserRoutes(r, config.DB)
+	router.RegisterPropertyRoutes(r, config.DB)
 
 	cors := gorillaHandlers.CORS(
 		gorillaHandlers.AllowedOrigins([]string{"http://localhost:3000"}),

@@ -11,7 +11,6 @@ type Property struct {
 	Guests           int       `json:"guests"`
 	Price            float64   `json:"price"`
 	Status           int       `json:"status"`
-	Amenities        []Amenity `gorm:"many2many:property_amenities;" json:"amenities"`
 	DisabledDateFrom time.Time `gorm:"type:date" json:"disabled_date_from"`
 	DisabledDateTo   time.Time `gorm:"type:date" json:"disabled_date_to"`
 	Description      string    `json:"description"`
@@ -21,4 +20,23 @@ type Property struct {
 	City             string    `json:"city"`
 	Address          string    `json:"address"`
 	Zip              int       `json:"zip"`
+	Amenities        string    `json:"amenities"`
+}
+
+type PropertyRequest struct {
+	Name             string    `json:"name" validate:"required"`
+	CountryID        uint      `json:"country_id" validate:"required"`
+	Guests           int       `json:"guests" validate:"required"`
+	Price            float64   `json:"price" validate:"required"`
+	Status           int       `json:"status" validate:"required"`
+	DisabledDateFrom time.Time `gorm:"type:date" json:"disabled_date_from" validate:"required"`
+	DisabledDateTo   time.Time `gorm:"type:date" json:"disabled_date_to" validate:"required"`
+	Description      string    `json:"description" validate:"required"`
+	Geo              string    `json:"geo" validate:"required"`
+	Province         string    `json:"province" validate:"required"`
+	District         string    `json:"district" validate:"required"`
+	City             string    `json:"city" validate:"required"`
+	Address          string    `json:"address" validate:"required"`
+	Zip              int       `json:"zip" validate:"required"`
+	Amenities        string    `json:"amenities" validate:"required"`
 }
