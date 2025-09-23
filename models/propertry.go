@@ -24,36 +24,36 @@ type Property struct {
 }
 
 type PropertyCreateRequest struct {
-	Name             string    `json:"name" validate:"required"`
-	CountryID        uint      `json:"country_id" validate:"required"`
-	Guests           int       `json:"guests" validate:"required"`
-	Price            float64   `json:"price" validate:"required"`
-	Status           int       `json:"status" validate:"required"`
-	DisabledDateFrom time.Time `gorm:"type:date" json:"disabled_date_from" validate:"required"`
-	DisabledDateTo   time.Time `gorm:"type:date" json:"disabled_date_to" validate:"required"`
-	Description      string    `json:"description" validate:"required"`
-	Geo              string    `json:"geo" validate:"required"`
-	Province         string    `json:"province" validate:"required"`
-	District         string    `json:"district" validate:"required"`
-	City             string    `json:"city" validate:"required"`
-	Address          string    `json:"address" validate:"required"`
-	Zip              int       `json:"zip" validate:"required"`
-	Amenities        string    `json:"amenities" validate:"required"`
+	Name             string    `json:"name" validate:"required,min=3"`
+	CountryID        uint      `json:"country_id" validate:"required,gt=0"`
+	Guests           int       `json:"guests" validate:"required,gt=0"`
+	Price            float64   `json:"price" validate:"required,gt=0"`
+	Status           int       `json:"status" validate:"required,oneof=1 2 3 4"`
+	DisabledDateFrom time.Time `json:"disabled_date_from" validate:"required"`
+	DisabledDateTo   time.Time `json:"disabled_date_to" validate:"required"`
+	Description      string    `json:"description" validate:"required,min=10"`
+	Geo              string    `json:"geo" validate:"required,min=3"`
+	Province         string    `json:"province" validate:"required,min=2"`
+	District         string    `json:"district" validate:"required,min=2"`
+	City             string    `json:"city" validate:"required,min=2"`
+	Address          string    `json:"address" validate:"required,min=5"`
+	Zip              int       `json:"zip" validate:"required,gt=0"`
+	Amenities        string    `json:"amenities" validate:"required,min=3"`
 }
 type PropertyEditRequest struct {
-	Name             *string    `json:"name,omitempty"`
-	CountryID        *uint      `json:"country_id,omitempty"`
-	Guests           *int       `json:"guests,omitempty"`
-	Price            *float64   `json:"price,omitempty"`
-	Status           *int       `json:"status,omitempty"`
-	DisabledDateFrom *time.Time `gorm:"type:date" json:"disabled_date_from,omitempty"`
-	DisabledDateTo   *time.Time `gorm:"type:date" json:"disabled_date_to,omitempty"`
-	Description      *string    `json:"description,omitempty"`
-	Geo              *string    `json:"geo,omitempty"`
-	Province         *string    `json:"province,omitempty"`
-	District         *string    `json:"district,omitempty"`
-	City             *string    `json:"city,omitempty"`
-	Address          *string    `json:"address,omitempty"`
-	Zip              *int       `json:"zip,omitempty"`
-	Amenities        *string    `json:"amenities,omitempty"`
+	Name             *string    `json:"name" validate:"omitempty,min=3"`
+	CountryID        *uint      `json:"country_id" validate:"omitempty,gt=0"`
+	Guests           *int       `json:"guests" validate:"omitempty,gt=0"`
+	Price            *float64   `json:"price" validate:"omitempty,gt=0"`
+	Status           *int       `json:"status" validate:"omitempty,oneof=1 2 3 4"`
+	DisabledDateFrom *time.Time `json:"disabled_date_from" validate:"omitempty"`
+	DisabledDateTo   *time.Time `json:"disabled_date_to" validate:"omitempty"`
+	Description      *string    `json:"description" validate:"omitempty,min=10"`
+	Geo              *string    `json:"geo" validate:"omitempty,min=3"`
+	Province         *string    `json:"province" validate:"omitempty,min=2"`
+	District         *string    `json:"district" validate:"omitempty,min=2"`
+	City             *string    `json:"city" validate:"omitempty,min=2"`
+	Address          *string    `json:"address" validate:"omitempty,min=5"`
+	Zip              *int       `json:"zip" validate:"omitempty,gt=0"`
+	Amenities        *string    `json:"amenities" validate:"omitempty,min=3"`
 }

@@ -36,6 +36,11 @@ func PropertyEdit(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		err = utils.FieldChecker(req)
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
 		// QUERY
 		updates := make(map[string]interface{})
