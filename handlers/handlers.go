@@ -27,3 +27,9 @@ func PropertyDelete(db *gorm.DB) http.HandlerFunc {
 func PropertyEdit(db *gorm.DB) http.HandlerFunc {
 	return property.PropertyEdit(db)
 }
+func PropertyList(db *gorm.DB) http.HandlerFunc {
+	return property.PropertyList(db)
+}
+func PropertyGet(db *gorm.DB) http.HandlerFunc {
+	return property.PropertyGet(db)
+}
