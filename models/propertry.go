@@ -23,7 +23,7 @@ type Property struct {
 	Amenities        string    `json:"amenities"`
 }
 
-type PropertyRequest struct {
+type PropertyCreateRequest struct {
 	Name             string    `json:"name" validate:"required"`
 	CountryID        uint      `json:"country_id" validate:"required"`
 	Guests           int       `json:"guests" validate:"required"`
@@ -39,4 +39,21 @@ type PropertyRequest struct {
 	Address          string    `json:"address" validate:"required"`
 	Zip              int       `json:"zip" validate:"required"`
 	Amenities        string    `json:"amenities" validate:"required"`
+}
+type PropertyEditRequest struct {
+	Name             *string    `json:"name,omitempty"`
+	CountryID        *uint      `json:"country_id,omitempty"`
+	Guests           *int       `json:"guests,omitempty"`
+	Price            *float64   `json:"price,omitempty"`
+	Status           *int       `json:"status,omitempty"`
+	DisabledDateFrom *time.Time `gorm:"type:date" json:"disabled_date_from,omitempty"`
+	DisabledDateTo   *time.Time `gorm:"type:date" json:"disabled_date_to,omitempty"`
+	Description      *string    `json:"description,omitempty"`
+	Geo              *string    `json:"geo,omitempty"`
+	Province         *string    `json:"province,omitempty"`
+	District         *string    `json:"district,omitempty"`
+	City             *string    `json:"city,omitempty"`
+	Address          *string    `json:"address,omitempty"`
+	Zip              *int       `json:"zip,omitempty"`
+	Amenities        *string    `json:"amenities,omitempty"`
 }

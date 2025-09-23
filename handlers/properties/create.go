@@ -22,7 +22,7 @@ func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		var req models.PropertyRequest
+		var req models.PropertyCreateRequest
 		err = utils.BodyChecker(r, &req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)

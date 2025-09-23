@@ -24,3 +24,6 @@ func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 func PropertyDelete(db *gorm.DB) http.HandlerFunc {
 	return property.PropertyDelete(db)
 }
+func PropertyEdit(db *gorm.DB) http.HandlerFunc {
+	return property.PropertyEdit(db)
+}
