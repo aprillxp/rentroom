@@ -24,6 +24,15 @@ type UserRegisterRequest struct {
 	BankNumber string `json:"bank_number" validate:"required"`
 	IsTenant   bool   `json:"is_tenant"`
 }
+type UserEditRequest struct {
+	Username   *string `json:"username" validate:"omitempty,min=3,max=50,alphanum"`
+	Email      *string `json:"email" validate:"omitempty,email"`
+	Phone      *string `json:"phone" validate:"omitempty"`
+	Password   *string `json:"password" validate:"omitempty"`
+	BankID     *uint   `json:"bank_id" validate:"omitempty,gt=0"`
+	BankNumber *string `json:"bank_number" validate:"omitempty"`
+	IsTenant   *bool   `json:"is_tenant"`
+}
 type UserLoginRequest struct {
 	Identifier string `json:"identifier" validate:"required"`
 	Password   string `json:"password" validate:"required"`

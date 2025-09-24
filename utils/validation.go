@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"reflect"
 	"regexp"
 	"rentroom/models"
 
@@ -24,10 +25,33 @@ func BodyChecker(r *http.Request, req interface{}) error {
 
 func FieldChecker(req interface{}) error {
 	validate := validator.New()
-	err := validate.Struct(req)
-	if err == nil {
+
+	kind := reflect.TypeOf(req).Kind()
+	if kind == reflect.Struct {
+		err := validate.Struct(req)
+		if err != nil {
+			return ParseValidationError(err)
+		}
 		return nil
 	}
+
+	val := reflect.ValueOf(req)
+	if val.Kind() == reflect.Ptr && val.Elem().Kind() != reflect.Struct {
+		temp := struct {
+			Field interface{} `validate:"required"`
+		}{
+			Field: req,
+		}
+		err := validate.Struct(temp)
+		if err != nil {
+			return ParseValidationError(err)
+		}
+		return nil
+	}
+	return fmt.Errorf("unsupported type for validation")
+}
+
+func ParseValidationError(err error) error {
 	if errs, ok := err.(validator.ValidationErrors); ok {
 		e := errs[0]
 		return fmt.Errorf("field %s failed on the '%s' rule", e.Field(), e.Tag())
@@ -35,10 +59,10 @@ func FieldChecker(req interface{}) error {
 	return err
 }
 
-func UserUniqueness(db *gorm.DB, username, email, phone string) error {
+func UserUniqueness(db *gorm.DB, currentUserID uint, username, email, phone string) error {
 	var user models.User
 	err := db.
-		Where("username = ? OR email = ? OR phone = ?", username, email, phone).
+		Where("id != ? AND (username = ? OR email = ? OR phone = ?)", currentUserID, username, email, phone).
 		First(&user).Error
 	if err == nil {
 		return errors.New("username, email, or phone  already exists")

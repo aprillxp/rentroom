@@ -11,6 +11,12 @@ import (
 func UserRegister(db *gorm.DB) http.HandlerFunc {
 	return auth.UserRegister(db)
 }
+func UserEdit(db *gorm.DB) http.HandlerFunc {
+	return auth.UserEdit(db)
+}
+func UserGet(db *gorm.DB) http.HandlerFunc {
+	return auth.UserGet(db)
+}
 func UserLogin(db *gorm.DB) http.HandlerFunc {
 	return auth.UserLogin(db)
 }

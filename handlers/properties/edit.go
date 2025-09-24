@@ -104,7 +104,7 @@ func PropertyEdit(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		//RESPONSE
+		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "property updated successfully",

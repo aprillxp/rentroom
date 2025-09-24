@@ -54,3 +54,10 @@ func SeedInitialData(db *gorm.DB) {
 		db.FirstOrCreate(&a, models.Bank{Name: a.Name})
 	}
 }
+
+func PtrToStrOrEmpty(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
