@@ -35,13 +35,14 @@ func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// QUERY
+		var property models.Property
 		err = db.Transaction(func(tx *gorm.DB) error {
-			property := models.Property{
+			property = models.Property{
 				Name:             req.Name,
 				CountryID:        req.CountryID,
 				Guests:           req.Guests,
 				Price:            req.Price,
-				Status:           req.Status,
+				Status:           models.StatusDraft,
 				DisabledDateFrom: req.DisabledDateFrom,
 				DisabledDateTo:   req.DisabledDateTo,
 				Description:      req.Description,
@@ -71,11 +72,17 @@ func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		propertyUpdated, err := utils.GetProperty(db, int(property.ID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "property created successfully",
+			Data:    propertyUpdated,
 		}, http.StatusCreated)
 	}
 }

@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+const (
+	StatusPublished = 1
+	StatusDraft     = 2
+)
+
 type Property struct {
 	ID               uint      `gorm:"primaryKey" json:"id"`
 	Name             string    `json:"name"`
@@ -28,7 +33,6 @@ type PropertyCreateRequest struct {
 	CountryID        uint      `json:"country_id" validate:"required,gt=0"`
 	Guests           int       `json:"guests" validate:"required,gt=0"`
 	Price            float64   `json:"price" validate:"required,gt=0"`
-	Status           int       `json:"status" validate:"required,oneof=1 2 3 4"`
 	DisabledDateFrom time.Time `json:"disabled_date_from" validate:"required"`
 	DisabledDateTo   time.Time `json:"disabled_date_to" validate:"required"`
 	Description      string    `json:"description" validate:"required,min=10"`

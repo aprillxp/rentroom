@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"regexp"
 	"rentroom/models"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
@@ -65,7 +66,7 @@ func UserUniqueness(db *gorm.DB, currentUserID uint, username, email, phone stri
 		Where("id != ? AND (username = ? OR email = ? OR phone = ?)", currentUserID, username, email, phone).
 		First(&user).Error
 	if err == nil {
-		return errors.New("username, email, or phone  already exists")
+		return errors.New("username, email, or phone already exists")
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil
@@ -94,6 +95,45 @@ func PropertyUserChecker(db *gorm.DB, userID, propertyID int) error {
 		return errors.New("property under tenant does not exist")
 	}
 	return err
+}
+
+func PropertOwnedByUser(db *gorm.DB, userID, propertyID int) error {
+	var userProperty models.UserProperties
+	err := db.
+		Where("user_id = ? AND property_id = ?", userID, propertyID).
+		First(&userProperty).Error
+	if err == nil {
+		return errors.New("cannot perform action on your own property")
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return err
+}
+
+func PropertyAvailable(db *gorm.DB, propertyID uint, checkin, checkout time.Time) error {
+	var property models.Property
+	err := db.First(&property, propertyID).Error
+	if err != nil {
+		return err
+	}
+	if (checkin.Equal(property.DisabledDateTo) || checkin.Before(property.DisabledDateTo)) &&
+		(checkout.Equal(property.DisabledDateFrom) || checkout.After(property.DisabledDateFrom)) {
+		return errors.New("property is unavailable on your date request by tennant")
+	}
+	var transactions = []models.Transaction{}
+	err = db.
+		Where("property_id = ? AND status = ?", propertyID, 1).
+		Find(&transactions).Error
+	if err != nil {
+		return err
+	}
+	for _, t := range transactions {
+		if checkin.Before(t.CheckOut) && t.CheckIn.Before(checkout) {
+			return errors.New("property is already booked for your requested dates")
+		}
+	}
+	return nil
 }
 
 func PasswordValidator(password string) error {

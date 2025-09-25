@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"net/http"
-	auth "rentroom/handlers/auth"
 	property "rentroom/handlers/properties"
+	transaction "rentroom/handlers/transactions"
+	auth "rentroom/handlers/users"
 
 	"gorm.io/gorm"
 )
@@ -38,4 +39,8 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 }
 func PropertyGet(db *gorm.DB) http.HandlerFunc {
 	return property.PropertyGet(db)
+}
+
+func TransactionCreate(db *gorm.DB) http.HandlerFunc {
+	return transaction.TransactionCreate(db)
 }
