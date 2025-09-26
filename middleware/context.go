@@ -12,10 +12,10 @@ const (
 	CtxRole
 )
 
-func MustUserID(r *http.Request) (int, error) {
+func MustUserID(r *http.Request) (uint, error) {
 	id, ok := r.Context().Value(CtxUserID).(int)
 	if !ok {
 		return 0, errors.New("unauthorized")
 	}
-	return id, nil
+	return uint(id), nil
 }

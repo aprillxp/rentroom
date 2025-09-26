@@ -44,3 +44,9 @@ func PropertyGet(db *gorm.DB) http.HandlerFunc {
 func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 	return transaction.TransactionCreate(db)
 }
+func TransactionList(db *gorm.DB) http.HandlerFunc {
+	return transaction.TransactionList(db)
+}
+func TransactionGet(db *gorm.DB) http.HandlerFunc {
+	return transaction.TransactionGet(db)
+}

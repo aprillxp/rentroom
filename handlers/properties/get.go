@@ -29,7 +29,7 @@ func PropertyGet(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "properties returned successfully",
+			Message: "property returned successfully",
 			Data:    property,
 		}, http.StatusOK)
 	}

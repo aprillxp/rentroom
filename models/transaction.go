@@ -11,12 +11,12 @@ const (
 type Transaction struct {
 	ID         uint      `gorm:"primaryKey" json:"id"`
 	PropertyID uint      `json:"property_id"`
-	UserID     int       `json:"user_id"`
+	UserID     uint      `json:"user_id"`
 	Price      float64   `json:"price"`
 	CheckIn    time.Time `gorm:"type:date" json:"check_in"`
 	CheckOut   time.Time `gorm:"type:date" json:"check_out"`
 	Status     int       `json:"status"`
-	VoucherID  int       `json:"voucher_id"`
+	VoucherID  uint      `json:"voucher_id"`
 }
 
 type TransactionRequest struct {
@@ -29,10 +29,9 @@ type TransactionRequest struct {
 type TransactionResponse struct {
 	ID         uint      `json:"id"`
 	PropertyID uint      `json:"property_id"`
-	UserID     int       `json:"user_id"`
 	Price      float64   `json:"price"`
 	CheckIn    time.Time `gorm:"type:date" json:"check_in"`
 	CheckOut   time.Time `gorm:"type:date" json:"check_out"`
 	Status     int       `json:"status"`
-	VoucherID  int       `json:"voucher_id"`
+	VoucherID  uint      `json:"voucher_id"`
 }

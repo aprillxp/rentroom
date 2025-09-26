@@ -48,8 +48,12 @@ func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		discount := 0.0
+		var voucherID uint
 		if req.VoucherID != nil {
 			discount = utils.GetVoucher(db, int(*req.VoucherID))
+			voucherID = *req.VoucherID
+		} else {
+			voucherID = 0
 		}
 		price := (property.Price * float64(nights)) * (1.0 - discount)
 		transaction := models.Transaction{
@@ -59,11 +63,16 @@ func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 			CheckIn:    req.CheckIn,
 			CheckOut:   req.CheckOut,
 			Status:     models.StatusPending,
-			VoucherID:  int(*req.VoucherID),
+			VoucherID:  voucherID,
 		}
 		err = db.Create(&transaction).Error
 		if err != nil {
 			utils.JSONError(w, "failed create transaction", http.StatusInternalServerError)
+			return
+		}
+		transactionUpdated, err := utils.GetTransaction(db, transaction.ID, userID)
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -71,7 +80,7 @@ func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "transaction created successfully",
-			Data:    transaction,
+			Data:    transactionUpdated,
 		}, http.StatusCreated)
 	}
 }

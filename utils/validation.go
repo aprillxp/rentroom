@@ -74,7 +74,7 @@ func UserUniqueness(db *gorm.DB, currentUserID uint, username, email, phone stri
 	return err
 }
 
-func UserIsTenant(db *gorm.DB, userID int) error {
+func UserIsTenant(db *gorm.DB, userID uint) error {
 	var user models.User
 	err := db.Select("is_tenant").First(&user, userID).Error
 	if err != nil {
@@ -86,7 +86,7 @@ func UserIsTenant(db *gorm.DB, userID int) error {
 	return nil
 }
 
-func PropertyUserChecker(db *gorm.DB, userID, propertyID int) error {
+func PropertyUserChecker(db *gorm.DB, userID uint, propertyID int) error {
 	var userProperty models.UserProperties
 	err := db.
 		Where("user_id = ? AND property_id = ?", userID, propertyID).
@@ -97,7 +97,7 @@ func PropertyUserChecker(db *gorm.DB, userID, propertyID int) error {
 	return err
 }
 
-func PropertOwnedByUser(db *gorm.DB, userID, propertyID int) error {
+func PropertOwnedByUser(db *gorm.DB, userID uint, propertyID int) error {
 	var userProperty models.UserProperties
 	err := db.
 		Where("user_id = ? AND property_id = ?", userID, propertyID).
@@ -123,7 +123,7 @@ func PropertyAvailable(db *gorm.DB, propertyID uint, checkin, checkout time.Time
 	}
 	var transactions = []models.Transaction{}
 	err = db.
-		Where("property_id = ? AND status = ?", propertyID, 1).
+		Where("property_id = ? AND status = ?", propertyID, models.StatusPublished).
 		Find(&transactions).Error
 	if err != nil {
 		return err
