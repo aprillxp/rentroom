@@ -45,7 +45,7 @@ func GetVoucher(db *gorm.DB, voucherID int) float64 {
 	return float64(voucher.Discount)
 }
 
-func GetTransaction(db *gorm.DB, transactionID, userID uint) (models.TransactionResponse, error) {
+func GetTransaction(db *gorm.DB, userID, transactionID uint) (models.TransactionResponse, error) {
 	var transaction models.Transaction
 	err := db.
 		Where("id = ? AND user_id = ?", transactionID, userID).

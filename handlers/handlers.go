@@ -50,3 +50,6 @@ func TransactionList(db *gorm.DB) http.HandlerFunc {
 func TransactionGet(db *gorm.DB) http.HandlerFunc {
 	return transaction.TransactionGet(db)
 }
+func TransactionCancel(db *gorm.DB) http.HandlerFunc {
+	return transaction.TransactionCancel(db)
+}

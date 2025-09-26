@@ -25,7 +25,7 @@ func PropertyDelete(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid property id", http.StatusBadRequest)
 			return
 		}
-		err = utils.PropertyUserChecker(db, userID, int(propertyID))
+		err = utils.PropertyUserChecker(db, userID, uint(propertyID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return

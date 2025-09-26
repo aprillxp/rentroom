@@ -29,7 +29,12 @@ func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = utils.PropertOwnedByUser(db, userID, int(req.PropertyID))
+		err = utils.PropertOwnedByUser(db, userID, uint(req.PropertyID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		err = utils.TransactionOwnedByUser(db, userID, uint(req.PropertyID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
@@ -70,7 +75,7 @@ func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "failed create transaction", http.StatusInternalServerError)
 			return
 		}
-		transactionUpdated, err := utils.GetTransaction(db, transaction.ID, userID)
+		transactionUpdated, err := utils.GetTransaction(db, userID, transaction.ID)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return

@@ -3,6 +3,7 @@ package transactions
 import (
 	"net/http"
 	"rentroom/middleware"
+	"rentroom/models"
 	"rentroom/utils"
 	"strconv"
 
@@ -10,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionGet(db *gorm.DB) http.HandlerFunc {
+func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)
@@ -24,8 +25,20 @@ func TransactionGet(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return
 		}
+		err = utils.TransactionUserChecker(db, userID, uint(transactionID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
 		// QUERY
+		err = db.Model(&models.Transaction{}).
+			Where("id = ?", transactionID).
+			Update("status", models.StatusCanceled).Error
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		transaction, err := utils.GetTransaction(db, userID, uint(transactionID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
@@ -35,7 +48,7 @@ func TransactionGet(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "transaction returned successfully",
+			Message: "transaction canceled successfully",
 			Data:    transaction,
 		}, http.StatusOK)
 	}

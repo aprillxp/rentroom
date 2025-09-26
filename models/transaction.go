@@ -3,15 +3,16 @@ package models
 import "time"
 
 const (
-	StatusPaid    = 1
-	StatusPending = 2
-	StatusCancel  = 3
+	StatusPaid     = 1
+	StatusPending  = 2
+	StatusCanceled = 3
+	StatusRejected = 4
 )
 
 type Transaction struct {
 	ID         uint      `gorm:"primaryKey" json:"id"`
-	PropertyID uint      `json:"property_id"`
 	UserID     uint      `json:"user_id"`
+	PropertyID uint      `json:"property_id"`
 	Price      float64   `json:"price"`
 	CheckIn    time.Time `gorm:"type:date" json:"check_in"`
 	CheckOut   time.Time `gorm:"type:date" json:"check_out"`

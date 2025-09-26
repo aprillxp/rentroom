@@ -23,7 +23,6 @@ func BodyChecker(r *http.Request, req interface{}) error {
 	}
 	return nil
 }
-
 func FieldChecker(req interface{}) error {
 	validate := validator.New()
 
@@ -51,7 +50,6 @@ func FieldChecker(req interface{}) error {
 	}
 	return fmt.Errorf("unsupported type for validation")
 }
-
 func ParseValidationError(err error) error {
 	if errs, ok := err.(validator.ValidationErrors); ok {
 		e := errs[0]
@@ -60,6 +58,7 @@ func ParseValidationError(err error) error {
 	return err
 }
 
+// USER
 func UserUniqueness(db *gorm.DB, currentUserID uint, username, email, phone string) error {
 	var user models.User
 	err := db.
@@ -73,7 +72,6 @@ func UserUniqueness(db *gorm.DB, currentUserID uint, username, email, phone stri
 	}
 	return err
 }
-
 func UserIsTenant(db *gorm.DB, userID uint) error {
 	var user models.User
 	err := db.Select("is_tenant").First(&user, userID).Error
@@ -85,57 +83,6 @@ func UserIsTenant(db *gorm.DB, userID uint) error {
 	}
 	return nil
 }
-
-func PropertyUserChecker(db *gorm.DB, userID uint, propertyID int) error {
-	var userProperty models.UserProperties
-	err := db.
-		Where("user_id = ? AND property_id = ?", userID, propertyID).
-		First(&userProperty).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return errors.New("property under tenant does not exist")
-	}
-	return err
-}
-
-func PropertOwnedByUser(db *gorm.DB, userID uint, propertyID int) error {
-	var userProperty models.UserProperties
-	err := db.
-		Where("user_id = ? AND property_id = ?", userID, propertyID).
-		First(&userProperty).Error
-	if err == nil {
-		return errors.New("cannot perform action on your own property")
-	}
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil
-	}
-	return err
-}
-
-func PropertyAvailable(db *gorm.DB, propertyID uint, checkin, checkout time.Time) error {
-	var property models.Property
-	err := db.First(&property, propertyID).Error
-	if err != nil {
-		return err
-	}
-	if (checkin.Equal(property.DisabledDateTo) || checkin.Before(property.DisabledDateTo)) &&
-		(checkout.Equal(property.DisabledDateFrom) || checkout.After(property.DisabledDateFrom)) {
-		return errors.New("property is unavailable on your date request by tennant")
-	}
-	var transactions = []models.Transaction{}
-	err = db.
-		Where("property_id = ? AND status = ?", propertyID, models.StatusPublished).
-		Find(&transactions).Error
-	if err != nil {
-		return err
-	}
-	for _, t := range transactions {
-		if checkin.Before(t.CheckOut) && t.CheckIn.Before(checkout) {
-			return errors.New("property is already booked for your requested dates")
-		}
-	}
-	return nil
-}
-
 func PasswordValidator(password string) error {
 	if len(password) < 8 {
 		return errors.New("password must be at least 8 characters")
@@ -148,7 +95,6 @@ func PasswordValidator(password string) error {
 	}
 	return nil
 }
-
 func PhoneValidator(phone string) error {
 	phone = NormalizePhone(phone)
 	phoneRegex := regexp.MustCompile(`^\+?[1-9]\d{6,14}$`)
@@ -156,4 +102,78 @@ func PhoneValidator(phone string) error {
 		return errors.New("phone number is invalid")
 	}
 	return nil
+}
+
+// PROPERTIES
+func PropertyUserChecker(db *gorm.DB, userID, propertyID uint) error {
+	var userProperty models.UserProperties
+	err := db.
+		Where("user_id = ? AND property_id = ?", userID, propertyID).
+		First(&userProperty).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("property under tenant does not exist")
+	}
+	return err
+}
+func PropertOwnedByUser(db *gorm.DB, userID, propertyID uint) error {
+	var userProperty models.UserProperties
+	err := db.
+		Where("user_id = ? AND property_id = ?", userID, propertyID).
+		First(&userProperty).Error
+	if err == nil {
+		return errors.New("cannot perform action on your own property")
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return err
+}
+func PropertyAvailable(db *gorm.DB, propertyID uint, checkin, checkout time.Time) error {
+	var property models.Property
+	err := db.First(&property, propertyID).Error
+	if err != nil {
+		return err
+	}
+	if (checkin.Equal(property.DisabledDateTo) || checkin.Before(property.DisabledDateTo)) &&
+		(checkout.Equal(property.DisabledDateFrom) || checkout.After(property.DisabledDateFrom)) {
+		return errors.New("property is unavailable on your date request by tennant")
+	}
+	var transactions = []models.Transaction{}
+	err = db.
+		Where("property_id = ? AND status = ?", propertyID, models.StatusPaid).
+		Find(&transactions).Error
+	if err != nil {
+		return err
+	}
+	for _, t := range transactions {
+		if checkin.Before(t.CheckOut) && t.CheckIn.Before(checkout) {
+			return errors.New("property is already booked for your requested dates")
+		}
+	}
+	return nil
+}
+
+// TRANSACTION
+func TransactionUserChecker(db *gorm.DB, userID uint, transactionID uint) error {
+	var userTrasaction models.Transaction
+	err := db.
+		Where("id = ? AND user_id = ?", transactionID, userID).
+		First(&userTrasaction).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("transaction under user does not exist")
+	}
+	return err
+}
+func TransactionOwnedByUser(db *gorm.DB, userID, propertyID uint) error {
+	var transaction models.Transaction
+	err := db.
+		Where("user_id = ? AND property_id = ?", userID, propertyID).
+		First(&transaction).Error
+	if err == nil {
+		return errors.New("transaction under this property already created")
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return err
 }
