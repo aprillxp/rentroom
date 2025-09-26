@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionList(db *gorm.DB) http.HandlerFunc {
+func TransactionUserList(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)
@@ -43,7 +43,7 @@ func TransactionList(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "transactions returned successfully",
+			Message: "user transactions returned successfully",
 			Data:    transactionUpdated,
 		}, http.StatusOK)
 	}

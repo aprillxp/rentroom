@@ -19,6 +19,11 @@ func PropertyDelete(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
+		err = utils.UserIsTenant(db, userID)
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
 		vars := mux.Vars(r)
 		propertyID, err := strconv.ParseUint(vars["property-id"], 10, 64)
 		if err != nil {

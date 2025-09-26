@@ -4,6 +4,7 @@ import (
 	"net/http"
 	property "rentroom/handlers/property"
 	propertyTenant "rentroom/handlers/tenant/property"
+	transactionTenant "rentroom/handlers/tenant/transaction"
 	userAuth "rentroom/handlers/user/auth"
 	userProfile "rentroom/handlers/user/profile"
 	transactionUser "rentroom/handlers/user/transaction"
@@ -49,9 +50,12 @@ func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 	return transactionUser.TransactionCancel(db)
 }
-func TransactionList(db *gorm.DB) http.HandlerFunc {
-	return transactionUser.TransactionList(db)
+func TransactionUserList(db *gorm.DB) http.HandlerFunc {
+	return transactionUser.TransactionUserList(db)
 }
 func TransactionGet(db *gorm.DB) http.HandlerFunc {
 	return transactionUser.TransactionGet(db)
+}
+func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
+	return transactionTenant.TransactionTenantList(db)
 }
