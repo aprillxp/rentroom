@@ -5,11 +5,13 @@ import (
 	"rentroom/middleware"
 	"rentroom/models"
 	"rentroom/utils"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
-func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
+func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)
@@ -22,6 +24,12 @@ func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
+		vars := mux.Vars(r)
+		transactionID, err := strconv.ParseUint(vars["transaction-id"], 10, 64)
+		if err != nil {
+			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
+			return
+		}
 
 		// QUERY
 		propertyIDs, err := utils.GetPropertyIDs(db, userID)
@@ -29,10 +37,10 @@ func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		var transactions []models.Transaction
+		var transaction []models.Transaction
 		err = db.
-			Where("property_id IN ?", propertyIDs).
-			Find(&transactions).Error
+			Where("id = ? AND property_id IN ?", transactionID, propertyIDs).
+			Find(&transaction).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -41,8 +49,9 @@ func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "tenant transactions returned",
-			Data:    transactions,
+			Message: "transaction returned",
+			Data:    transaction,
 		}, http.StatusOK)
+
 	}
 }

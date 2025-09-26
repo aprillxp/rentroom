@@ -27,7 +27,7 @@ func UserGet(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "user returned successfully",
+			Message: "user returned",
 			Data:    user,
 		}, http.StatusOK)
 	}

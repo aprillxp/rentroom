@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionGet(db *gorm.DB) http.HandlerFunc {
+func TransactionUserGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)
@@ -26,7 +26,7 @@ func TransactionGet(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// QUERY
-		transaction, err := utils.GetTransaction(db, userID, uint(transactionID))
+		transaction, err := utils.GetUserTransaction(db, userID, uint(transactionID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -35,7 +35,7 @@ func TransactionGet(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "transaction returned successfully",
+			Message: "transaction returned",
 			Data:    transaction,
 		}, http.StatusOK)
 	}

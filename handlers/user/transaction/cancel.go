@@ -39,7 +39,7 @@ func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		transaction, err := utils.GetTransaction(db, userID, uint(transactionID))
+		transaction, err := utils.GetUserTransaction(db, userID, uint(transactionID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -48,7 +48,7 @@ func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "transaction canceled successfully",
+			Message: "transaction canceled",
 			Data:    transaction,
 		}, http.StatusOK)
 	}

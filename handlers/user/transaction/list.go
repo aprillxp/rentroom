@@ -43,7 +43,7 @@ func TransactionUserList(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "user transactions returned successfully",
+			Message: "user transactions returned",
 			Data:    transactionUpdated,
 		}, http.StatusOK)
 	}

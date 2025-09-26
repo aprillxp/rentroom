@@ -180,3 +180,13 @@ func TransactionOwnedByUser(db *gorm.DB, userID, propertyID uint) error {
 	}
 	return err
 }
+func TransactionTenantChecker(db *gorm.DB, propertyIDs []uint, transactionID uint) error {
+	var tenantTransaction models.Transaction
+	err := db.
+		Where("id = ? AND property_id IN ?", transactionID, propertyIDs).
+		Find(&tenantTransaction).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("transaction does not exist")
+	}
+	return err
+}

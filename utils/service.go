@@ -45,7 +45,7 @@ func GetVoucher(db *gorm.DB, voucherID int) float64 {
 	return float64(voucher.Discount)
 }
 
-func GetTransaction(db *gorm.DB, userID, transactionID uint) (models.TransactionResponse, error) {
+func GetUserTransaction(db *gorm.DB, userID, transactionID uint) (models.TransactionResponse, error) {
 	var transaction models.Transaction
 	err := db.
 		Where("id = ? AND user_id = ?", transactionID, userID).
@@ -62,4 +62,37 @@ func GetTransaction(db *gorm.DB, userID, transactionID uint) (models.Transaction
 		Status:     transaction.Status,
 		VoucherID:  transaction.VoucherID,
 	}, nil
+}
+
+func GetTenantTransaction(db *gorm.DB, propertyIDs []uint, transactionID uint) (models.TransactionResponse, error) {
+	var transaction models.Transaction
+	err := db.
+		Where("id = ? AND property_id IN ?", transactionID, propertyIDs).
+		First(&transaction).Error
+	if err != nil {
+		return models.TransactionResponse{}, errors.New("transaction not found")
+	}
+	return models.TransactionResponse{
+		ID:         transaction.ID,
+		PropertyID: transaction.PropertyID,
+		Price:      transaction.Price,
+		CheckIn:    transaction.CheckIn,
+		CheckOut:   transaction.CheckOut,
+		Status:     transaction.Status,
+		VoucherID:  transaction.VoucherID,
+	}, nil
+}
+
+func GetPropertyIDs(db *gorm.DB, userID uint) ([]uint, error) {
+	var propertyIDs []uint
+	err := db.Model(&models.UserProperties{}).
+		Where("user_id = ?", userID).
+		Pluck("property_id", &propertyIDs).Error
+	if err != nil {
+		return nil, err
+	}
+	if len(propertyIDs) == 0 {
+		return nil, errors.New("no properties found for this user")
+	}
+	return propertyIDs, nil
 }

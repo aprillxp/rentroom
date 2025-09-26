@@ -53,9 +53,18 @@ func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 func TransactionUserList(db *gorm.DB) http.HandlerFunc {
 	return transactionUser.TransactionUserList(db)
 }
-func TransactionGet(db *gorm.DB) http.HandlerFunc {
-	return transactionUser.TransactionGet(db)
+func TransactionUserGet(db *gorm.DB) http.HandlerFunc {
+	return transactionUser.TransactionUserGet(db)
 }
 func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
 	return transactionTenant.TransactionTenantList(db)
+}
+func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
+	return transactionTenant.TransactionTenantGet(db)
+}
+func TransactionApprove(db *gorm.DB) http.HandlerFunc {
+	return transactionTenant.TransactionApprove(db)
+}
+func TransactionReject(db *gorm.DB) http.HandlerFunc {
+	return transactionTenant.TransactionReject(db)
 }
