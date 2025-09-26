@@ -49,7 +49,6 @@ type PropertyEditRequest struct {
 	CountryID        *uint      `json:"country_id" validate:"omitempty,gt=0"`
 	Guests           *int       `json:"guests" validate:"omitempty,gt=0"`
 	Price            *float64   `json:"price" validate:"omitempty,gt=0"`
-	Status           *int       `json:"status" validate:"omitempty,oneof=1 2 3 4"`
 	DisabledDateFrom *time.Time `json:"disabled_date_from" validate:"omitempty"`
 	DisabledDateTo   *time.Time `json:"disabled_date_to" validate:"omitempty"`
 	Description      *string    `json:"description" validate:"omitempty,min=10"`

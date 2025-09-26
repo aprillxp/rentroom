@@ -56,9 +56,7 @@ func PropertyEdit(db *gorm.DB) http.HandlerFunc {
 		if req.Price != nil {
 			updates["price"] = *req.Price
 		}
-		if req.Status != nil {
-			updates["status"] = *req.Status
-		}
+		updates["status"] = models.StatusDraft
 		if req.DisabledDateFrom != nil {
 			updates["disabled_date_from"] = *req.DisabledDateFrom
 		}

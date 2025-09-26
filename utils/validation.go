@@ -138,6 +138,9 @@ func PropertyAvailable(db *gorm.DB, propertyID uint, checkin, checkout time.Time
 		(checkout.Equal(property.DisabledDateFrom) || checkout.After(property.DisabledDateFrom)) {
 		return errors.New("property is unavailable on your date request by tennant")
 	}
+	if property.Status != models.StatusPublished {
+		return errors.New("property is not published")
+	}
 	var transactions = []models.Transaction{}
 	err = db.
 		Where("property_id = ? AND status = ?", propertyID, models.StatusApproved).
@@ -167,7 +170,7 @@ func TransactionUserChecker(db *gorm.DB, userID uint, transactionID uint) error 
 func TransactionOwnedByUser(db *gorm.DB, userID, propertyID uint) error {
 	var transaction models.Transaction
 	err := db.
-		Where("user_id = ? AND property_id = ?", userID, propertyID).
+		Where("user_id = ? AND property_id = ? AND status IN ?", userID, propertyID, []int{models.StatusPending, models.StatusApproved}).
 		First(&transaction).Error
 	if err == nil {
 		return errors.New("transaction under this property already created")
