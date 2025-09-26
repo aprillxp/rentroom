@@ -1,4 +1,4 @@
-package transactions
+package user
 
 import (
 	"net/http"

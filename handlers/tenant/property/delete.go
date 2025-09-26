@@ -1,4 +1,4 @@
-package properties
+package tenant
 
 import (
 	"net/http"
@@ -51,7 +51,7 @@ func PropertyDelete(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "property deleted successfully",
+			Message: "property deleted",
 		}, http.StatusOK)
 	}
 }

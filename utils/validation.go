@@ -140,7 +140,7 @@ func PropertyAvailable(db *gorm.DB, propertyID uint, checkin, checkout time.Time
 	}
 	var transactions = []models.Transaction{}
 	err = db.
-		Where("property_id = ? AND status = ?", propertyID, models.StatusPaid).
+		Where("property_id = ? AND status = ?", propertyID, models.StatusApproved).
 		Find(&transactions).Error
 	if err != nil {
 		return err

@@ -31,7 +31,6 @@ type UserEditRequest struct {
 	Password   *string `json:"password" validate:"omitempty"`
 	BankID     *uint   `json:"bank_id" validate:"omitempty,gt=0"`
 	BankNumber *string `json:"bank_number" validate:"omitempty"`
-	IsTenant   *bool   `json:"is_tenant"`
 }
 type UserResponse struct {
 	ID         uint   `json:"id"`

@@ -1,4 +1,4 @@
-package properties
+package property
 
 import (
 	"net/http"
@@ -26,7 +26,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "properties returned successfully",
+			Message: "properties returned",
 			Data:    properties,
 		}, http.StatusOK)
 	}

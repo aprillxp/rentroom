@@ -3,7 +3,7 @@ package models
 import "time"
 
 const (
-	StatusPaid     = 1
+	StatusApproved = 1
 	StatusPending  = 2
 	StatusCanceled = 3
 	StatusRejected = 4

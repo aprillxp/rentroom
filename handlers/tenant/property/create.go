@@ -1,4 +1,4 @@
-package properties
+package tenant
 
 import (
 	"net/http"
@@ -81,7 +81,7 @@ func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "property created successfully",
+			Message: "property created",
 			Data:    propertyUpdated,
 		}, http.StatusCreated)
 	}

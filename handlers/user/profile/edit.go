@@ -1,4 +1,4 @@
-package users
+package user
 
 import (
 	"net/http"
@@ -84,9 +84,6 @@ func UserEdit(db *gorm.DB) http.HandlerFunc {
 		if req.BankNumber != nil {
 			updates["bank_number"] = *req.BankNumber
 		}
-		if req.IsTenant != nil {
-			updates["is_tenant"] = *req.IsTenant
-		}
 		if len(updates) > 0 {
 			err = db.Model(&models.User{}).
 				Where("id = ?", userID).
@@ -105,7 +102,7 @@ func UserEdit(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "user updated successfully",
+			Message: "user updated",
 			Data:    userUpdated,
 		}, http.StatusOK)
 	}

@@ -9,8 +9,8 @@ import (
 )
 
 func RegisterTransactionRoutes(r *mux.Router, db *gorm.DB) {
-	r.Handle("/api/transaction/create", middleware.JwtAuthUser(handlers.TransactionCreate(db))).Methods("POST")
-	r.Handle("/api/transaction/list", middleware.JwtAuthUser(handlers.TransactionList(db))).Methods("GET")
-	r.Handle("/api/transaction/get/{transaction-id}", middleware.JwtAuthUser(handlers.TransactionGet(db))).Methods("GET")
-	r.Handle("/api/transaction/{transaction-id}/cancel", middleware.JwtAuthUser(handlers.TransactionCancel(db))).Methods("PATCH")
+	r.Handle("/api/transaction/user/create", middleware.JwtAuthUser(handlers.TransactionCreate(db))).Methods("POST")
+	r.Handle("/api/transaction/user/get/{transaction-id}", middleware.JwtAuthUser(handlers.TransactionGet(db))).Methods("GET")
+	r.Handle("/api/transaction/user/list", middleware.JwtAuthUser(handlers.TransactionList(db))).Methods("GET")
+	r.Handle("/api/transaction/user/{transaction-id}/cancel", middleware.JwtAuthUser(handlers.TransactionCancel(db))).Methods("PATCH")
 }

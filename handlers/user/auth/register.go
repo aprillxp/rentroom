@@ -1,4 +1,4 @@
-package users
+package user
 
 import (
 	"net/http"
@@ -70,7 +70,7 @@ func UserRegister(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "user registered successfully",
+			Message: "user registered",
 			Data:    userUpdated,
 		}, http.StatusCreated)
 	}

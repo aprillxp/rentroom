@@ -1,4 +1,4 @@
-package properties
+package tenant
 
 import (
 	"net/http"
@@ -107,7 +107,7 @@ func PropertyEdit(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "property updated successfully",
+			Message: "property updated",
 			Data:    propertyUpdated,
 		}, http.StatusOK)
 	}

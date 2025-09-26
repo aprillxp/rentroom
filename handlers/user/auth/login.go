@@ -1,4 +1,4 @@
-package users
+package user
 
 import (
 	"errors"
@@ -73,7 +73,7 @@ func UserLogin(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "user login successfully",
+			Message: "user logged in",
 			Data: models.UserLoginResponse{
 				Token: token,
 			},

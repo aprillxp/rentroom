@@ -1,4 +1,4 @@
-package properties
+package property
 
 import (
 	"net/http"
@@ -29,7 +29,7 @@ func PropertyGet(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "property returned successfully",
+			Message: "property returned",
 			Data:    property,
 		}, http.StatusOK)
 	}

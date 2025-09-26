@@ -2,37 +2,39 @@ package handlers
 
 import (
 	"net/http"
-	property "rentroom/handlers/properties"
-	transaction "rentroom/handlers/transactions"
-	auth "rentroom/handlers/users"
+	property "rentroom/handlers/property"
+	propertyTenant "rentroom/handlers/tenant/property"
+	userAuth "rentroom/handlers/user/auth"
+	userProfile "rentroom/handlers/user/profile"
+	transactionUser "rentroom/handlers/user/transaction"
 
 	"gorm.io/gorm"
 )
 
 func UserRegister(db *gorm.DB) http.HandlerFunc {
-	return auth.UserRegister(db)
-}
-func UserEdit(db *gorm.DB) http.HandlerFunc {
-	return auth.UserEdit(db)
-}
-func UserGet(db *gorm.DB) http.HandlerFunc {
-	return auth.UserGet(db)
+	return userAuth.UserRegister(db)
 }
 func UserLogin(db *gorm.DB) http.HandlerFunc {
-	return auth.UserLogin(db)
+	return userAuth.UserLogin(db)
 }
 func UserLogout() http.HandlerFunc {
-	return auth.UserLogout()
+	return userAuth.UserLogout()
+}
+func UserEdit(db *gorm.DB) http.HandlerFunc {
+	return userProfile.UserEdit(db)
+}
+func UserGet(db *gorm.DB) http.HandlerFunc {
+	return userProfile.UserGet(db)
 }
 
 func PropertyCreate(db *gorm.DB) http.HandlerFunc {
-	return property.PropertyCreate(db)
+	return propertyTenant.PropertyCreate(db)
 }
 func PropertyDelete(db *gorm.DB) http.HandlerFunc {
-	return property.PropertyDelete(db)
+	return propertyTenant.PropertyDelete(db)
 }
 func PropertyEdit(db *gorm.DB) http.HandlerFunc {
-	return property.PropertyEdit(db)
+	return propertyTenant.PropertyEdit(db)
 }
 func PropertyList(db *gorm.DB) http.HandlerFunc {
 	return property.PropertyList(db)
@@ -42,14 +44,14 @@ func PropertyGet(db *gorm.DB) http.HandlerFunc {
 }
 
 func TransactionCreate(db *gorm.DB) http.HandlerFunc {
-	return transaction.TransactionCreate(db)
-}
-func TransactionList(db *gorm.DB) http.HandlerFunc {
-	return transaction.TransactionList(db)
-}
-func TransactionGet(db *gorm.DB) http.HandlerFunc {
-	return transaction.TransactionGet(db)
+	return transactionUser.TransactionCreate(db)
 }
 func TransactionCancel(db *gorm.DB) http.HandlerFunc {
-	return transaction.TransactionCancel(db)
+	return transactionUser.TransactionCancel(db)
+}
+func TransactionList(db *gorm.DB) http.HandlerFunc {
+	return transactionUser.TransactionList(db)
+}
+func TransactionGet(db *gorm.DB) http.HandlerFunc {
+	return transactionUser.TransactionGet(db)
 }
