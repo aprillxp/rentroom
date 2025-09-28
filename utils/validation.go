@@ -103,26 +103,6 @@ func PhoneValidator(phone string) error {
 	}
 	return nil
 }
-func BankValidator(db *gorm.DB, bankID int) error {
-	var bank models.Bank
-	err := db.
-		Select("id").
-		First(&bank, bankID).Error
-	if err != nil {
-		return errors.New("bank id is not found")
-	}
-	return nil
-}
-func CountryValidator(db *gorm.DB, CountryID int) error {
-	var country models.Country
-	err := db.
-		Select("id").
-		First(&country, CountryID).Error
-	if err != nil {
-		return errors.New("country id is not found")
-	}
-	return nil
-}
 
 // PROPERTIES
 func PropertyUserChecker(db *gorm.DB, userID, propertyID uint) error {
@@ -175,7 +155,7 @@ func PropertyAvailable(db *gorm.DB, propertyID uint, checkin, checkout time.Time
 	}
 	return nil
 }
-func TransactionActiveUnderProperty(db *gorm.DB, propertyId uint) error {
+func PropertyHaveAnActiveTransaction(db *gorm.DB, propertyId uint) error {
 	var propertyTransaction models.Transaction
 	err := db.
 		Where("property_id = ? AND status = ?", propertyId, models.StatusApproved).
@@ -248,4 +228,39 @@ func TransactionIsApproved(db *gorm.DB, transactionID uint) error {
 		return errors.New("cannot perform action since satus is not approved")
 	}
 	return nil
+}
+
+// GENERAL
+func BankValidator(db *gorm.DB, bankID int) error {
+	var bank models.Bank
+	err := db.
+		Select("id").
+		First(&bank, bankID).Error
+	if err != nil {
+		return errors.New("bank id is not found")
+	}
+	return nil
+}
+func CountryValidator(db *gorm.DB, CountryID int) error {
+	var country models.Country
+	err := db.
+		Select("id").
+		First(&country, CountryID).Error
+	if err != nil {
+		return errors.New("country id is not found")
+	}
+	return nil
+}
+func VoucherUniqueness(db *gorm.DB, name string) error {
+	var voucher models.Voucher
+	err := db.
+		Where("name = ?", name).
+		First(&voucher).Error
+	if err == nil {
+		return errors.New("voucher name already exists")
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return err
 }

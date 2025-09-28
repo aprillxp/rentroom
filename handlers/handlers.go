@@ -5,6 +5,7 @@ import (
 	adminAuth "rentroom/handlers/admin/auth"
 	adminProperty "rentroom/handlers/admin/property"
 	transactionAdmin "rentroom/handlers/admin/transaction"
+	adminVoucher "rentroom/handlers/admin/voucher"
 	property "rentroom/handlers/property"
 	propertyTenant "rentroom/handlers/tenant/property"
 	transactionTenant "rentroom/handlers/tenant/transaction"
@@ -41,6 +42,9 @@ func PropertyPublish(db *gorm.DB) http.HandlerFunc {
 }
 func PropertyDraft(db *gorm.DB) http.HandlerFunc {
 	return adminProperty.PropertyDraft(db)
+}
+func AdminVoucherCreate(db *gorm.DB) http.HandlerFunc {
+	return adminVoucher.AdminVoucherCreate(db)
 }
 
 // PROPERTY

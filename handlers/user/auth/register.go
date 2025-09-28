@@ -66,17 +66,12 @@ func UserRegister(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "failed create user", http.StatusInternalServerError)
 			return
 		}
-		userUpdated, err := utils.GetUser(db, uint(user.ID))
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "user registered",
-			Data:    userUpdated,
+			Data:    user,
 		}, http.StatusCreated)
 	}
 }
