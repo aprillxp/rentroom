@@ -155,6 +155,19 @@ func PropertyAvailable(db *gorm.DB, propertyID uint, checkin, checkout time.Time
 	}
 	return nil
 }
+func TransactionActiveUnderProperty(db *gorm.DB, propertyId uint) error {
+	var propertyTransaction models.Transaction
+	err := db.
+		Where("property_id = ? AND status = ?", propertyId, models.StatusApproved).
+		First(&propertyTransaction).Error
+	if err == nil {
+		return errors.New("cannot perform action, property has an active tranacstion")
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+	return nil
+}
 
 // TRANSACTION
 func TransactionUserChecker(db *gorm.DB, userID uint, transactionID uint) error {

@@ -46,6 +46,11 @@ func PropertyEdit(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		err = utils.TransactionActiveUnderProperty(db, uint(propertyID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
 
 		// QUERY
 		updates := make(map[string]interface{})
