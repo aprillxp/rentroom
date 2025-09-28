@@ -80,6 +80,9 @@ func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 	return transactionUser.TransactionCancel(db)
 }
+func TransactionReview(db *gorm.DB) http.HandlerFunc {
+	return transactionUser.TransactionReview(db)
+}
 func TransactionUserList(db *gorm.DB) http.HandlerFunc {
 	return transactionUser.TransactionUserList(db)
 }

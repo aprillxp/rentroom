@@ -33,6 +33,7 @@ func main() {
 		&models.PropertyAmenities{},
 		&models.Transaction{},
 		&models.Voucher{},
+		&models.Review{},
 	)
 	utils.SeedInitialData(config.DB)
 	utils.InitRedis()

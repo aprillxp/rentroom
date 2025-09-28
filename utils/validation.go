@@ -229,6 +229,19 @@ func TransactionIsApproved(db *gorm.DB, transactionID uint) error {
 	}
 	return nil
 }
+func TransactionIsDone(db *gorm.DB, transactionID uint) error {
+	var transaction models.Transaction
+	err := db.
+		Where("id = ? AND status = ?", transactionID, models.StatusDone).
+		First(&transaction).Error
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("cannot perform action since satus is not done")
+	}
+	return nil
+}
 
 // GENERAL
 func BankValidator(db *gorm.DB, bankID int) error {
@@ -258,6 +271,19 @@ func VoucherUniqueness(db *gorm.DB, name string) error {
 		First(&voucher).Error
 	if err == nil {
 		return errors.New("voucher name already exists")
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return err
+}
+func ReviewUniqueness(db *gorm.DB, tranacstionID uint) error {
+	var review models.Review
+	err := db.
+		Where("transaction_id = ?", tranacstionID).
+		First(&review).Error
+	if err == nil {
+		return errors.New("review name already exists")
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil
