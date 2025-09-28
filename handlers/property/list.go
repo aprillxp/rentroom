@@ -11,11 +11,13 @@ import (
 func PropertyList(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// QUERY
-		country := r.URL.Query().Get("country")
+		countryID := r.URL.Query().Get("country")
 		var properties []models.Property
 		query := db
-		if country != "" {
-			query = query.Where("country_id = ? AND status = ?", country, models.StatusPublished)
+		if countryID != "" {
+			query = query.Where("country_id = ? AND status = ?", countryID, models.StatusPublished)
+		} else {
+			query = query.Where("status = ?", models.StatusPublished)
 		}
 		err := query.Find(&properties).Error
 		if err != nil {

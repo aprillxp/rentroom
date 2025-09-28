@@ -103,6 +103,26 @@ func PhoneValidator(phone string) error {
 	}
 	return nil
 }
+func BankValidator(db *gorm.DB, bankID int) error {
+	var bank models.Bank
+	err := db.
+		Select("id").
+		First(&bank, bankID).Error
+	if err != nil {
+		return errors.New("bank id is not found")
+	}
+	return nil
+}
+func CountryValidator(db *gorm.DB, CountryID int) error {
+	var country models.Country
+	err := db.
+		Select("id").
+		First(&country, CountryID).Error
+	if err != nil {
+		return errors.New("country id is not found")
+	}
+	return nil
+}
 
 // PROPERTIES
 func PropertyUserChecker(db *gorm.DB, userID, propertyID uint) error {

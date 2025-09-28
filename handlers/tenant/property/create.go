@@ -33,6 +33,11 @@ func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		err = utils.CountryValidator(db, int(req.CountryID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
 		// QUERY
 		var property models.Property

@@ -35,6 +35,11 @@ func UserRegister(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		err = utils.BankValidator(db, int(req.BankID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 		err = utils.UserUniqueness(db, 0, req.Username, req.Email, req.Phone)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)

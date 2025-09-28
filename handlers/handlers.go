@@ -44,6 +44,12 @@ func PropertyDraft(db *gorm.DB) http.HandlerFunc {
 }
 
 // PROPERTY
+func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
+	return propertyTenant.PropertyTenantList(db)
+}
+func PropertyTenantGet(db *gorm.DB) http.HandlerFunc {
+	return propertyTenant.PropertyTenantGet(db)
+}
 func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 	return propertyTenant.PropertyCreate(db)
 }
