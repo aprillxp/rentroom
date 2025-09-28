@@ -25,7 +25,11 @@ func PropertyDraft(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return
 		}
-		// check tranaactions unsder this property is not contain active tranasction or approved
+		err = utils.TransactionActiveUnderProperty(db, uint(propertyID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
 
 		// QUERY
 		err = db.Model(&models.Property{}).
