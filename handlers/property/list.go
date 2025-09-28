@@ -15,7 +15,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		var properties []models.Property
 		query := db
 		if country != "" {
-			query = query.Where("country_id = ?", country)
+			query = query.Where("country_id = ? AND status = ?", country, models.StatusPublished)
 		}
 		err := query.Find(&properties).Error
 		if err != nil {

@@ -2,6 +2,7 @@ package property
 
 import (
 	"net/http"
+	"rentroom/models"
 	"rentroom/utils"
 	"strconv"
 
@@ -23,6 +24,10 @@ func PropertyGet(db *gorm.DB) http.HandlerFunc {
 		property, err := utils.GetProperty(db, int(propertyID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if property.Status != models.StatusPublished {
+			utils.JSONError(w, "property is not published", http.StatusInternalServerError)
 			return
 		}
 
