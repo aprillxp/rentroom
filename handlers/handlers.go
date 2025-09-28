@@ -46,6 +46,9 @@ func PropertyDraft(db *gorm.DB) http.HandlerFunc {
 func AdminVoucherCreate(db *gorm.DB) http.HandlerFunc {
 	return adminVoucher.AdminVoucherCreate(db)
 }
+func AdminVoucherEdit(db *gorm.DB) http.HandlerFunc {
+	return adminVoucher.AdminVoucherEdit(db)
+}
 
 // PROPERTY
 func PropertyTenantList(db *gorm.DB) http.HandlerFunc {

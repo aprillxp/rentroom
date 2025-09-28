@@ -33,16 +33,16 @@ func GetUser(db *gorm.DB, userID uint) (models.UserResponse, error) {
 	}, nil
 }
 
-func GetVoucher(db *gorm.DB, voucherID int) float64 {
+func GetVoucher(db *gorm.DB, voucherID int) (models.Voucher, error) {
 	var voucher models.Voucher
 	err := db.First(&voucher, voucherID).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return 0.0
+			return models.Voucher{}, errors.New("voucher not found")
 		}
-		return 0.0
+		return models.Voucher{}, errors.New("voucher not found")
 	}
-	return float64(voucher.Discount)
+	return voucher, err
 }
 
 func GetTransaction(db *gorm.DB, transactionID uint) (models.TransactionResponse, error) {

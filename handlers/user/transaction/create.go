@@ -55,7 +55,12 @@ func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 		discount := 0.0
 		var voucherID uint
 		if req.VoucherID != nil {
-			discount = utils.GetVoucher(db, int(*req.VoucherID))
+			voucher, err := utils.GetVoucher(db, int(*req.VoucherID))
+			if err != nil {
+				utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			discount = voucher.Discount
 			voucherID = *req.VoucherID
 		} else {
 			voucherID = 0
