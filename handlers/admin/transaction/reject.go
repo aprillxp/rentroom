@@ -30,6 +30,11 @@ func TransactionReject(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return
 		}
+		err = utils.TransactionIsPending(db, uint(transactionID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
 		// QUERY
 		propertyIDs, err := utils.GetPropertyIDs(db, userID)

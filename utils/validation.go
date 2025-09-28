@@ -190,3 +190,29 @@ func TransactionTenantChecker(db *gorm.DB, propertyIDs []uint, transactionID uin
 	}
 	return err
 }
+func TransactionIsPending(db *gorm.DB, transactionID uint) error {
+	var transaction models.Transaction
+	err := db.
+		Where("id = ? AND status = ?", transactionID, models.StatusPending).
+		First(&transaction).Error
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("cannot perform action since status is not pending")
+	}
+	return nil
+}
+func TransactionIsApproved(db *gorm.DB, transactionID uint) error {
+	var transaction models.Transaction
+	err := db.
+		Where("id = ? AND status = ?", transactionID, models.StatusApproved).
+		First(&transaction).Error
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("cannot perform action since satus is not approved")
+	}
+	return nil
+}

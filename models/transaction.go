@@ -7,6 +7,7 @@ const (
 	StatusPending  = 2
 	StatusCanceled = 3
 	StatusRejected = 4
+	StatusDone     = 5
 )
 
 type Transaction struct {

@@ -1,4 +1,4 @@
-package user
+package tenant
 
 import (
 	"net/http"
@@ -11,10 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionCancel(db *gorm.DB) http.HandlerFunc {
+func TransactionApprove(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
-		userID, err := middleware.MustUserID(r)
+		err := middleware.MustAdminID(r)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
@@ -23,11 +23,6 @@ func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 		transactionID, err := strconv.ParseUint(vars["transaction-id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
-			return
-		}
-		err = utils.TransactionUserChecker(db, userID, uint(transactionID))
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		err = utils.TransactionIsPending(db, uint(transactionID))
@@ -39,12 +34,12 @@ func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 		// QUERY
 		err = db.Model(&models.Transaction{}).
 			Where("id = ?", transactionID).
-			Update("status", models.StatusCanceled).Error
+			Update("status", models.StatusApproved).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		transaction, err := utils.GetUserTransaction(db, userID, uint(transactionID))
+		transaction, err := utils.GetTransaction(db, uint(transactionID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -53,7 +48,7 @@ func TransactionCancel(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "transaction canceled",
+			Message: "transaction approved",
 			Data:    transaction,
 		}, http.StatusOK)
 	}

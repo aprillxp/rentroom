@@ -11,15 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionApprove(db *gorm.DB) http.HandlerFunc {
+func TransactionDone(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
-		userID, err := middleware.MustUserID(r)
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
-		err = utils.UserIsTenant(db, userID)
+		err := middleware.MustAdminID(r)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
@@ -30,26 +25,21 @@ func TransactionApprove(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return
 		}
+		err = utils.TransactionIsApproved(db, uint(transactionID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
 		// QUERY
-		propertyIDs, err := utils.GetPropertyIDs(db, userID)
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		err = utils.TransactionTenantChecker(db, propertyIDs, uint(transactionID))
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
 		err = db.Model(&models.Transaction{}).
 			Where("id = ?", transactionID).
-			Update("status", models.StatusApproved).Error
+			Update("status", models.StatusDone).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		transaction, err := utils.GetTenantTransaction(db, propertyIDs, uint(transactionID))
+		transaction, err := utils.GetTransaction(db, uint(transactionID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -58,7 +48,7 @@ func TransactionApprove(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "transaction canceled",
+			Message: "transaction done",
 			Data:    transaction,
 		}, http.StatusOK)
 	}
