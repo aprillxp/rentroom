@@ -8,7 +8,8 @@ import (
 type ctxKey int
 
 const (
-	CtxUserID ctxKey = iota
+	CtxUserID  ctxKey = iota
+	CtxAdminID ctxKey = iota
 	CtxRole
 )
 
@@ -18,4 +19,12 @@ func MustUserID(r *http.Request) (uint, error) {
 		return 0, errors.New("unauthorized")
 	}
 	return uint(id), nil
+}
+
+func MustAdminID(r *http.Request) error {
+	_, ok := r.Context().Value(CtxAdminID).(int)
+	if !ok {
+		return errors.New("unauthorized")
+	}
+	return nil
 }

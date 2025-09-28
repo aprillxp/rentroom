@@ -47,7 +47,7 @@ func UserLogin(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid credentials", http.StatusUnauthorized)
 			return
 		}
-		token, err := utils.GenerateJWT(int(user.ID), "user")
+		token, err := utils.GenerateJWT(uint(user.ID), "user")
 		if err != nil {
 			utils.JSONError(w, "token generation failed", http.StatusInternalServerError)
 			return

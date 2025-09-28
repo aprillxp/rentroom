@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"net/http"
+	adminAuth "rentroom/handlers/admin/auth"
+	adminProperty "rentroom/handlers/admin/property"
+	transactionAdmin "rentroom/handlers/admin/transaction"
 	property "rentroom/handlers/property"
 	propertyTenant "rentroom/handlers/tenant/property"
 	transactionTenant "rentroom/handlers/tenant/transaction"
@@ -12,6 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// USER
 func UserRegister(db *gorm.DB) http.HandlerFunc {
 	return userAuth.UserRegister(db)
 }
@@ -28,6 +32,18 @@ func UserGet(db *gorm.DB) http.HandlerFunc {
 	return userProfile.UserGet(db)
 }
 
+// ADMIN
+func AdminLogin(db *gorm.DB) http.HandlerFunc {
+	return adminAuth.AdminLogin(db)
+}
+func PropertyPublish(db *gorm.DB) http.HandlerFunc {
+	return adminProperty.PropertyPublish(db)
+}
+func PropertyDraft(db *gorm.DB) http.HandlerFunc {
+	return adminProperty.PropertyDraft(db)
+}
+
+// PROPERTY
 func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 	return propertyTenant.PropertyCreate(db)
 }
@@ -44,6 +60,7 @@ func PropertyGet(db *gorm.DB) http.HandlerFunc {
 	return property.PropertyGet(db)
 }
 
+// TRANSACTION
 func TransactionCreate(db *gorm.DB) http.HandlerFunc {
 	return transactionUser.TransactionCreate(db)
 }
@@ -63,8 +80,11 @@ func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
 	return transactionTenant.TransactionTenantGet(db)
 }
 func TransactionApprove(db *gorm.DB) http.HandlerFunc {
-	return transactionTenant.TransactionApprove(db)
+	return transactionAdmin.TransactionApprove(db)
 }
 func TransactionReject(db *gorm.DB) http.HandlerFunc {
-	return transactionTenant.TransactionReject(db)
+	return transactionAdmin.TransactionReject(db)
+}
+func TransactionDone(db *gorm.DB) http.HandlerFunc {
+	return transactionAdmin.TransactionDone(db)
 }
