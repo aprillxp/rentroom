@@ -52,7 +52,6 @@ func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 				City:             req.City,
 				Address:          req.Address,
 				Zip:              req.Zip,
-				Amenities:        req.Amenities,
 			}
 			err = tx.Create(&property).Error
 			if err != nil {
@@ -65,6 +64,16 @@ func PropertyCreate(db *gorm.DB) http.HandlerFunc {
 			err = tx.Create(&userProperty).Error
 			if err != nil {
 				return err
+			}
+			for _, amenityID := range req.Amenities {
+				propertyAmenities := models.PropertyAmenities{
+					PropertyID: property.ID,
+					AmenityID:  amenityID,
+				}
+				err := tx.Create(&propertyAmenities).Error
+				if err != nil {
+					return err
+				}
 			}
 			return nil
 		})

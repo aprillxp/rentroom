@@ -42,19 +42,9 @@ func PropertyDelete(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// QUERY
-		err = db.Transaction(func(tx *gorm.DB) error {
-			err = tx.Delete(&models.Property{}, propertyID).Error
-			if err != nil {
-				return err
-			}
-			err = tx.Where("property_id = ?", propertyID).Delete(&models.UserProperties{}).Error
-			if err != nil {
-				return err
-			}
-			return nil
-		})
+		err = db.Delete(&models.Property{}, propertyID).Error
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, "failed to delete property", http.StatusInternalServerError)
 			return
 		}
 

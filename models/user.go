@@ -11,10 +11,15 @@ type User struct {
 	IsTenant   bool       `json:"is_tenant"`
 	Property   []Property `gorm:"many2many:user_properties;" json:"properties"`
 }
+
 type UserProperties struct {
-	UserID     uint `gorm:"primaryKey" json:"user_id"`
-	PropertyID uint `gorm:"primaryKey" json:"property_id"`
+	UserID     uint `gorm:"primaryKey;not null"`
+	PropertyID uint `gorm:"primaryKey;not null"`
+
+	User     User     `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE"`
+	Property Property `gorm:"foreignKey:PropertyID;references:ID;constraint:OnDelete:CASCADE"`
 }
+
 type UserRegisterRequest struct {
 	Username   string `json:"username" validate:"required,min=3,max=50,alphanum"`
 	Email      string `json:"email" validate:"required,email"`

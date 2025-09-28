@@ -24,8 +24,15 @@ type Property struct {
 	District         string    `json:"district"`
 	City             string    `json:"city"`
 	Address          string    `json:"address"`
-	Zip              int       `json:"zip"`
-	Amenities        string    `json:"amenities"`
+	Zip              string    `json:"zip"`
+}
+
+type PropertyAmenities struct {
+	PropertyID uint `gorm:"primaryKey;not null"`
+	AmenityID  uint `gorm:"primaryKey;not null"`
+
+	Property Property `gorm:"foreignKey:PropertyID;references:ID;constraint:OnDelete:CASCADE"`
+	Amenity  Amenity  `gorm:"foreignKey:AmenityID;references:ID;constraint:OnDelete:CASCADE"`
 }
 
 type PropertyCreateRequest struct {
@@ -41,8 +48,8 @@ type PropertyCreateRequest struct {
 	District         string    `json:"district" validate:"required,min=2"`
 	City             string    `json:"city" validate:"required,min=2"`
 	Address          string    `json:"address" validate:"required,min=5"`
-	Zip              int       `json:"zip" validate:"required,gt=0"`
-	Amenities        string    `json:"amenities" validate:"required,min=3"`
+	Zip              string    `json:"zip" validate:"required,gt=0"`
+	Amenities        []uint    `json:"amenities" validate:"required,min=1"`
 }
 type PropertyEditRequest struct {
 	Name             *string    `json:"name" validate:"omitempty,min=3"`
@@ -57,6 +64,6 @@ type PropertyEditRequest struct {
 	District         *string    `json:"district" validate:"omitempty,min=2"`
 	City             *string    `json:"city" validate:"omitempty,min=2"`
 	Address          *string    `json:"address" validate:"omitempty,min=5"`
-	Zip              *int       `json:"zip" validate:"omitempty,gt=0"`
-	Amenities        *string    `json:"amenities" validate:"omitempty,min=3"`
+	Zip              *string    `json:"zip" validate:"omitempty,gt=0"`
+	Amenities        *[]uint    `json:"amenities" validate:"omitempty,min=1"`
 }

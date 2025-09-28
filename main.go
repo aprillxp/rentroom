@@ -19,6 +19,10 @@ func main() {
 		log.Println("No .env file found")
 	}
 	config.ConnectDatabase()
+	err := config.DB.Exec("PRAGMA foreign_keys = ON").Error
+	if err != nil {
+		log.Fatal("Failed to enable foreign keys:", err)
+	}
 	config.DB.AutoMigrate(
 		&models.User{},
 		&models.Bank{},
@@ -26,6 +30,7 @@ func main() {
 		&models.Amenity{},
 		&models.Property{},
 		&models.UserProperties{},
+		&models.PropertyAmenities{},
 		&models.Transaction{},
 	)
 	utils.SeedInitialData(config.DB)
