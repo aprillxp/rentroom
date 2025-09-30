@@ -6,7 +6,7 @@ import (
 	adminProperty "rentroom/handlers/admin/property"
 	transactionAdmin "rentroom/handlers/admin/transaction"
 	adminVoucher "rentroom/handlers/admin/voucher"
-	property "rentroom/handlers/property"
+	propertyUser "rentroom/handlers/property"
 	propertyTenant "rentroom/handlers/tenant/property"
 	transactionTenant "rentroom/handlers/tenant/transaction"
 	userAuth "rentroom/handlers/user/auth"
@@ -23,65 +23,69 @@ func UserRegister(db *gorm.DB) http.HandlerFunc {
 func UserLogin(db *gorm.DB) http.HandlerFunc {
 	return userAuth.UserLogin(db)
 }
-func UserLogout() http.HandlerFunc {
-	return userAuth.UserLogout()
+func UserGet(db *gorm.DB) http.HandlerFunc {
+	return userProfile.UserGet(db)
 }
 func UserEdit(db *gorm.DB) http.HandlerFunc {
 	return userProfile.UserEdit(db)
 }
-func UserGet(db *gorm.DB) http.HandlerFunc {
-	return userProfile.UserGet(db)
+func UserLogout() http.HandlerFunc {
+	return userAuth.UserLogout()
 }
 
 // ADMIN
 func AdminLogin(db *gorm.DB) http.HandlerFunc {
 	return adminAuth.AdminLogin(db)
 }
-func PropertyPublish(db *gorm.DB) http.HandlerFunc {
-	return adminProperty.PropertyPublish(db)
-}
-func PropertyDraft(db *gorm.DB) http.HandlerFunc {
-	return adminProperty.PropertyDraft(db)
-}
-func AdminVoucherCreate(db *gorm.DB) http.HandlerFunc {
-	return adminVoucher.AdminVoucherCreate(db)
-}
-func AdminVoucherEdit(db *gorm.DB) http.HandlerFunc {
-	return adminVoucher.AdminVoucherEdit(db)
-}
 
 // PROPERTY
+func PropertyAdminPublish(db *gorm.DB) http.HandlerFunc {
+	return adminProperty.PropertyAdminPublish(db)
+}
+func PropertyAdminDraft(db *gorm.DB) http.HandlerFunc {
+	return adminProperty.PropertyAdminDraft(db)
+}
+
+func PropertyTenantCreate(db *gorm.DB) http.HandlerFunc {
+	return propertyTenant.PropertyTenantCreate(db)
+}
+func PropertyTenantDelete(db *gorm.DB) http.HandlerFunc {
+	return propertyTenant.PropertyTenantDelete(db)
+}
+func PropertyTenantEdit(db *gorm.DB) http.HandlerFunc {
+	return propertyTenant.PropertyTenantEdit(db)
+}
 func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
 	return propertyTenant.PropertyTenantList(db)
 }
 func PropertyTenantGet(db *gorm.DB) http.HandlerFunc {
 	return propertyTenant.PropertyTenantGet(db)
 }
-func PropertyCreate(db *gorm.DB) http.HandlerFunc {
-	return propertyTenant.PropertyCreate(db)
+
+func PropertyUserList(db *gorm.DB) http.HandlerFunc {
+	return propertyUser.PropertyUserList(db)
 }
-func PropertyDelete(db *gorm.DB) http.HandlerFunc {
-	return propertyTenant.PropertyDelete(db)
+func PropertyUserGet(db *gorm.DB) http.HandlerFunc {
+	return propertyUser.PropertyUserGet(db)
 }
-func PropertyEdit(db *gorm.DB) http.HandlerFunc {
-	return propertyTenant.PropertyEdit(db)
+
+// VOUCHER
+func VoucherAdminCreate(db *gorm.DB) http.HandlerFunc {
+	return adminVoucher.VoucherAdminCreate(db)
 }
-func PropertyList(db *gorm.DB) http.HandlerFunc {
-	return property.PropertyList(db)
-}
-func PropertyGet(db *gorm.DB) http.HandlerFunc {
-	return property.PropertyGet(db)
+func VoucherAdminEdit(db *gorm.DB) http.HandlerFunc {
+	return adminVoucher.VoucherAdminEdit(db)
 }
 
 // TRANSACTION
-func TransactionCreate(db *gorm.DB) http.HandlerFunc {
-	return transactionUser.TransactionCreate(db)
+func TransactionUserCreate(db *gorm.DB) http.HandlerFunc {
+	return transactionUser.TransactionUserCreate(db)
 }
-func TransactionCancel(db *gorm.DB) http.HandlerFunc {
-	return transactionUser.TransactionCancel(db)
+func TransactionUserCancel(db *gorm.DB) http.HandlerFunc {
+	return transactionUser.TransactionUserCancel(db)
 }
-func TransactionReview(db *gorm.DB) http.HandlerFunc {
-	return transactionUser.TransactionReview(db)
+func TransactionUserReview(db *gorm.DB) http.HandlerFunc {
+	return transactionUser.TransactionUserReview(db)
 }
 func TransactionUserList(db *gorm.DB) http.HandlerFunc {
 	return transactionUser.TransactionUserList(db)
@@ -89,18 +93,20 @@ func TransactionUserList(db *gorm.DB) http.HandlerFunc {
 func TransactionUserGet(db *gorm.DB) http.HandlerFunc {
 	return transactionUser.TransactionUserGet(db)
 }
+
 func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
 	return transactionTenant.TransactionTenantList(db)
 }
 func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
 	return transactionTenant.TransactionTenantGet(db)
 }
-func TransactionApprove(db *gorm.DB) http.HandlerFunc {
-	return transactionAdmin.TransactionApprove(db)
+
+func TransactionAdminApprove(db *gorm.DB) http.HandlerFunc {
+	return transactionAdmin.TransactionAdminApprove(db)
 }
-func TransactionReject(db *gorm.DB) http.HandlerFunc {
-	return transactionAdmin.TransactionReject(db)
+func TransactionAdminReject(db *gorm.DB) http.HandlerFunc {
+	return transactionAdmin.TransactionAdminReject(db)
 }
-func TransactionDone(db *gorm.DB) http.HandlerFunc {
-	return transactionAdmin.TransactionDone(db)
+func TransactionAdminDone(db *gorm.DB) http.HandlerFunc {
+	return transactionAdmin.TransactionAdminDone(db)
 }

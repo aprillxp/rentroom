@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func AdminVoucherCreate(db *gorm.DB) http.HandlerFunc {
+func VoucherAdminCreate(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		err := middleware.MustAdminID(r)

@@ -40,9 +40,10 @@ func main() {
 	r := mux.NewRouter()
 
 	router.RegisterUserRoutes(r, config.DB)
+	router.RegisterAdminRoutes(r, config.DB)
+	router.RegisterVoucherRoutes(r, config.DB)
 	router.RegisterPropertyRoutes(r, config.DB)
 	router.RegisterTransactionRoutes(r, config.DB)
-	router.RegisterAdminRoutes(r, config.DB)
 
 	cors := gorillaHandlers.CORS(
 		gorillaHandlers.AllowedOrigins([]string{"http://localhost:3000"}),

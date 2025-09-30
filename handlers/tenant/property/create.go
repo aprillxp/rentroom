@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func PropertyCreate(db *gorm.DB) http.HandlerFunc {
+func PropertyTenantCreate(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)

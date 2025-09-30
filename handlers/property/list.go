@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func PropertyList(db *gorm.DB) http.HandlerFunc {
+func PropertyUserList(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// QUERY
 		countryID := r.URL.Query().Get("country")

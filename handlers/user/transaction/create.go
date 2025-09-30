@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionCreate(db *gorm.DB) http.HandlerFunc {
+func TransactionUserCreate(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)

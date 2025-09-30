@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionCancel(db *gorm.DB) http.HandlerFunc {
+func TransactionUserCancel(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)

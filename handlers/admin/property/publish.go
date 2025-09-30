@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func PropertyPublish(db *gorm.DB) http.HandlerFunc {
+func PropertyAdminPublish(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		err := middleware.MustAdminID(r)

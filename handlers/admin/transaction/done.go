@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionDone(db *gorm.DB) http.HandlerFunc {
+func TransactionAdminDone(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		err := middleware.MustAdminID(r)

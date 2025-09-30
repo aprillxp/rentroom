@@ -9,15 +9,15 @@ import (
 )
 
 func RegisterPropertyRoutes(r *mux.Router, db *gorm.DB) {
-	r.HandleFunc("/api/property/list", handlers.PropertyList(db)).Methods("GET")
-	r.HandleFunc("/api/property/get/{property-id}", handlers.PropertyGet(db)).Methods("GET")
+	r.HandleFunc("/api/property/user/list", handlers.PropertyUserList(db)).Methods("GET")
+	r.HandleFunc("/api/property/user/get/{property-id}", handlers.PropertyUserGet(db)).Methods("GET")
 
 	r.Handle("/api/property/tenant/list", middleware.JwtAuthUser(handlers.PropertyTenantList(db))).Methods("GET")
 	r.Handle("/api/property/tenant/get/{property-id}", middleware.JwtAuthUser(handlers.PropertyTenantGet(db))).Methods("GET")
-	r.Handle("/api/property/tenant/create", middleware.JwtAuthUser(handlers.PropertyCreate(db))).Methods("POST")
-	r.Handle("/api/property/tenant/delete/{property-id}", middleware.JwtAuthUser(handlers.PropertyDelete(db))).Methods("DELETE")
-	r.Handle("/api/property/tenant/edit/{property-id}", middleware.JwtAuthUser(handlers.PropertyEdit(db))).Methods("PATCH")
+	r.Handle("/api/property/tenant/create", middleware.JwtAuthUser(handlers.PropertyTenantCreate(db))).Methods("POST")
+	r.Handle("/api/property/tenant/delete/{property-id}", middleware.JwtAuthUser(handlers.PropertyTenantDelete(db))).Methods("DELETE")
+	r.Handle("/api/property/tenant/edit/{property-id}", middleware.JwtAuthUser(handlers.PropertyTenantEdit(db))).Methods("PATCH")
 
-	r.Handle("/api/property/admin/publish/{property-id}", middleware.JwtAuthAdmin(handlers.PropertyPublish(db))).Methods("PATCH")
-	r.Handle("/api/property/admin/draft/{property-id}", middleware.JwtAuthAdmin(handlers.PropertyDraft(db))).Methods("PATCH")
+	r.Handle("/api/property/admin/publish/{property-id}", middleware.JwtAuthAdmin(handlers.PropertyAdminPublish(db))).Methods("PATCH")
+	r.Handle("/api/property/admin/draft/{property-id}", middleware.JwtAuthAdmin(handlers.PropertyAdminDraft(db))).Methods("PATCH")
 }

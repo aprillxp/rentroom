@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionReject(db *gorm.DB) http.HandlerFunc {
+func TransactionAdminReject(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)

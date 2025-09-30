@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func AdminVoucherEdit(db *gorm.DB) http.HandlerFunc {
+func VoucherAdminEdit(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		err := middleware.MustAdminID(r)
