@@ -7,7 +7,9 @@ import (
 	transactionAdmin "rentroom/handlers/admin/transaction"
 	adminVoucher "rentroom/handlers/admin/voucher"
 	propertyUser "rentroom/handlers/property"
+	propertyUserImage "rentroom/handlers/property/image"
 	propertyTenant "rentroom/handlers/tenant/property"
+	propertyTenantImage "rentroom/handlers/tenant/property/image"
 	transactionTenant "rentroom/handlers/tenant/transaction"
 	userAuth "rentroom/handlers/user/auth"
 	userProfile "rentroom/handlers/user/profile"
@@ -62,11 +64,21 @@ func PropertyTenantGet(db *gorm.DB) http.HandlerFunc {
 	return propertyTenant.PropertyTenantGet(db)
 }
 
+func PropertyTenantImageCreate(db *gorm.DB) http.HandlerFunc {
+	return propertyTenantImage.PropertyTenantImageCreate(db)
+}
+func PropertyTenantImageDelete(db *gorm.DB) http.HandlerFunc {
+	return propertyTenantImage.PropertyTenantImageDelete(db)
+}
+
 func PropertyUserList(db *gorm.DB) http.HandlerFunc {
 	return propertyUser.PropertyUserList(db)
 }
 func PropertyUserGet(db *gorm.DB) http.HandlerFunc {
 	return propertyUser.PropertyUserGet(db)
+}
+func PropertyUserImageList(db *gorm.DB) http.HandlerFunc {
+	return propertyUserImage.PropertyUserImageList(db)
 }
 
 // VOUCHER
