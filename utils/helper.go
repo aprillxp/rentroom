@@ -2,8 +2,12 @@ package utils
 
 import (
 	"errors"
+	"fmt"
+	"mime/multipart"
+	"path/filepath"
 	"rentroom/models"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -60,4 +64,11 @@ func PtrToStrOrEmpty(s *string) string {
 		return ""
 	}
 	return *s
+}
+
+func PathImage(header *multipart.FileHeader) (fsPath, publicPath string) {
+	filename := fmt.Sprintf("%d-%s", time.Now().Unix(), header.Filename)
+	fsPath = filepath.Join("./uploads", filename)
+	publicPath = "/uploads/" + filename
+	return
 }

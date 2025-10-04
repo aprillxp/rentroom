@@ -73,6 +73,5 @@ func PropertyTenantImageDelete(db *gorm.DB) http.HandlerFunc {
 			Success: true,
 			Message: "images deleted from property",
 		}, http.StatusCreated)
-
 	}
 }

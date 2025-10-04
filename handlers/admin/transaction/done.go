@@ -1,4 +1,4 @@
-package tenant
+package admin
 
 import (
 	"net/http"

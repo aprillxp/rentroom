@@ -1,4 +1,4 @@
-package property
+package admin
 
 import (
 	"net/http"
@@ -8,16 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func PropertyList(db *gorm.DB) http.HandlerFunc {
+func PropertyAdminList(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// QUERY
 		countryID := r.URL.Query().Get("country")
 		var properties []models.Property
-		query := db
+		query := db.Model(&models.Property{})
 		if countryID != "" {
-			query = query.Where("country_id = ? AND status = ?", countryID, models.StatusPublished)
-		} else {
-			query = query.Where("status = ?", models.StatusPublished)
+			query = query.Where("country_id = ?", countryID)
 		}
 		err := query.Find(&properties).Error
 		if err != nil {

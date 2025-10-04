@@ -290,3 +290,16 @@ func ReviewUniqueness(db *gorm.DB, tranacstionID uint) error {
 	}
 	return err
 }
+func CountryUniqueness(db *gorm.DB, countryName string) error {
+	var country models.Country
+	err := db.
+		Where("name = ?", countryName).
+		First(&country).Error
+	if err == nil {
+		return errors.New("country name already exists")
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return err
+}

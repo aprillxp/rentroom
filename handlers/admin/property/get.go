@@ -1,8 +1,7 @@
-package tenant
+package admin
 
 import (
 	"net/http"
-	"rentroom/middleware"
 	"rentroom/utils"
 	"strconv"
 
@@ -10,28 +9,13 @@ import (
 	"gorm.io/gorm"
 )
 
-func PropertyTenantGet(db *gorm.DB) http.HandlerFunc {
+func PropertyAdminGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
-		userID, err := middleware.MustUserID(r)
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
-		err = utils.UserIsTenant(db, userID)
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
 		vars := mux.Vars(r)
 		propertyID, err := strconv.ParseUint(vars["property-id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid property id", http.StatusBadRequest)
-			return
-		}
-		err = utils.PropertyUserChecker(db, userID, uint(propertyID))
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 

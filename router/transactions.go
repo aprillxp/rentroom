@@ -21,4 +21,6 @@ func RegisterTransactionRoutes(r *mux.Router, db *gorm.DB) {
 	r.Handle("/api/transaction/admin/approve/{transaction-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminApprove(db))).Methods("PATCH")
 	r.Handle("/api/transaction/admin/reject/{transaction-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminReject(db))).Methods("PATCH")
 	r.Handle("/api/transaction/admin/done/{transaction-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminDone(db))).Methods("PATCH")
+	r.Handle("/api/transaction/admin/list/{user-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminUserList(db))).Methods("GET")
+	r.Handle("/api/transaction/admin/get/{transaction-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminUserGet(db))).Methods("GET")
 }

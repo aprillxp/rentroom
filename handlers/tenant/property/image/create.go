@@ -1,7 +1,6 @@
 package tenant
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -9,7 +8,6 @@ import (
 	"rentroom/models"
 	"rentroom/utils"
 	"strconv"
-	"time"
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
@@ -57,9 +55,7 @@ func PropertyTenantImageCreate(db *gorm.DB) http.HandlerFunc {
 			}
 			defer file.Close()
 
-			filename := fmt.Sprintf("%d-%s", time.Now().Unix(), header.Filename)
-			fsPath := "./uploads/" + filename
-			publicPath := "/uploads/" + filename
+			fsPath, publicPath := utils.PathImage(header)
 
 			out, err := os.Create(fsPath)
 			if err != nil {

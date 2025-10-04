@@ -1,8 +1,7 @@
-package property
+package admin
 
 import (
 	"net/http"
-	"rentroom/models"
 	"rentroom/utils"
 	"strconv"
 
@@ -10,19 +9,18 @@ import (
 	"gorm.io/gorm"
 )
 
-func PropertyImageList(db *gorm.DB) http.HandlerFunc {
+func VoucherAdminGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		vars := mux.Vars(r)
-		propertyID, err := strconv.ParseUint(vars["property-id"], 10, 64)
+		voucherID, err := strconv.ParseUint(vars["voucher-id"], 10, 64)
 		if err != nil {
-			utils.JSONError(w, "invalid property id", http.StatusBadRequest)
+			utils.JSONError(w, "invalid voucher id", http.StatusBadRequest)
 			return
 		}
 
 		// QUERY
-		var images []models.Image
-		err = db.Where("property_id = ?", propertyID).Find(&images).Error
+		voucher, err := utils.GetVoucher(db, int(voucherID))
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -31,8 +29,8 @@ func PropertyImageList(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "images returned from property",
-			Data:    images,
+			Message: "voucher returned",
+			Data:    voucher,
 		}, http.StatusOK)
 	}
 }

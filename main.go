@@ -42,6 +42,7 @@ func main() {
 
 	router.RegisterUserRoutes(r, config.DB)
 	router.RegisterAdminRoutes(r, config.DB)
+	router.RegisterCountryRoutes(r, config.DB)
 	router.RegisterVoucherRoutes(r, config.DB)
 	router.RegisterPropertyRoutes(r, config.DB)
 	router.RegisterTransactionRoutes(r, config.DB)

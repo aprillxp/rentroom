@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func PropertyUserGet(db *gorm.DB) http.HandlerFunc {
+func PropertyGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		vars := mux.Vars(r)

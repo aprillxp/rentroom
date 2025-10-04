@@ -1,20 +1,28 @@
-package user
+package admin
 
 import (
 	"net/http"
 	"rentroom/middleware"
 	"rentroom/models"
 	"rentroom/utils"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
-func TransactionUserList(db *gorm.DB) http.HandlerFunc {
+func TransactionAdminUserList(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
-		userID, err := middleware.MustUserID(r)
+		err := middleware.MustAdminID(r)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		vars := mux.Vars(r)
+		userID, err := strconv.ParseUint(vars["user-id"], 10, 64)
+		if err != nil {
+			utils.JSONError(w, "invalid user id", http.StatusBadRequest)
 			return
 		}
 

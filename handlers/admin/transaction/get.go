@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TransactionAdminApprove(db *gorm.DB) http.HandlerFunc {
+func TransactionAdminUserGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		err := middleware.MustAdminID(r)
@@ -25,21 +25,12 @@ func TransactionAdminApprove(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return
 		}
-		err = utils.TransactionIsPending(db, uint(transactionID))
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusBadRequest)
-			return
-		}
 
 		// QUERY
-		err = db.Model(&models.Transaction{}).
+		var transaction []models.Transaction
+		err = db.
 			Where("id = ?", transactionID).
-			Update("status", models.StatusApproved).Error
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		transaction, err := utils.GetTransaction(db, uint(transactionID))
+			Find(&transaction).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -48,7 +39,7 @@ func TransactionAdminApprove(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "transaction approved",
+			Message: "transaction returned",
 			Data:    transaction,
 		}, http.StatusOK)
 	}

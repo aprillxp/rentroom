@@ -45,6 +45,18 @@ func GetVoucher(db *gorm.DB, voucherID int) (models.Voucher, error) {
 	return voucher, err
 }
 
+func GetCountry(db *gorm.DB, countryID int) (models.Country, error) {
+	var country models.Country
+	err := db.First(&country, countryID).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return models.Country{}, errors.New("country not found")
+		}
+		return models.Country{}, errors.New("country not found")
+	}
+	return country, err
+}
+
 func GetTransaction(db *gorm.DB, transactionID uint) (models.TransactionResponse, error) {
 	var transaction models.Transaction
 	err := db.
