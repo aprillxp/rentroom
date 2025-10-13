@@ -25,6 +25,8 @@ type Property struct {
 	City             string    `json:"city"`
 	Address          string    `json:"address"`
 	Zip              string    `json:"zip"`
+
+	Images []Image `gorm:"constraint:OnDelete:CASCADE"`
 }
 
 type PropertyAmenities struct {

@@ -138,6 +138,9 @@ func PropertyTenantGet(db *gorm.DB) http.HandlerFunc {
 }
 
 // TENANT > PROPERTY > IMAGE
+func PropertyTenantImageList(db *gorm.DB) http.HandlerFunc {
+	return propertyTenantImage.PropertyTenantImageList(db)
+}
 func PropertyTenantImageCreate(db *gorm.DB) http.HandlerFunc {
 	return propertyTenantImage.PropertyTenantImageCreate(db)
 }

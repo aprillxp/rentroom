@@ -2,7 +2,6 @@ package tenant
 
 import (
 	"net/http"
-	"os"
 	"rentroom/middleware"
 	"rentroom/models"
 	"rentroom/utils"
@@ -12,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func PropertyTenantDelete(db *gorm.DB) http.HandlerFunc {
+func PropertyTenantImageList(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)
@@ -31,39 +30,33 @@ func PropertyTenantDelete(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid property id", http.StatusBadRequest)
 			return
 		}
-		err = utils.PropertyUserChecker(db, userID, uint(propertyID))
+		err = utils.PropertyUserChecker(db, uint(userID), uint(propertyID))
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
-		err = utils.PropertyHaveAnActiveTransaction(db, uint(propertyID))
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// QUERY
 		var images []models.Image
-		err = db.
-			Where("property_id = ?", propertyID).
-			Find(&images).Error
+		err = db.Where("property_id = ?", propertyID).Find(&images).Error
 		if err != nil {
-			utils.JSONError(w, "failed to fetch images", http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		var imagesResponses []models.ImageResponse
 		for _, img := range images {
-			_ = os.Remove("." + img.Path)
-		}
-		err = db.Delete(&models.Property{}, propertyID).Error
-		if err != nil {
-			utils.JSONError(w, "failed to delete property", http.StatusInternalServerError)
-			return
+			imagesResponses = append(imagesResponses, models.ImageResponse{
+				ID:         img.ID,
+				PropertyID: img.PropertyID,
+				Path:       img.Path,
+			})
 		}
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "property deleted",
+			Message: "images returned from property",
+			Data:    imagesResponses,
 		}, http.StatusOK)
 	}
 }

@@ -14,9 +14,14 @@ func PropertyImageList(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		vars := mux.Vars(r)
-		propertyID, err := strconv.ParseUint(vars["property-id"], 10, 64)
+		propertyID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid property id", http.StatusBadRequest)
+			return
+		}
+		err = utils.PropertyExist(db, uint(propertyID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 

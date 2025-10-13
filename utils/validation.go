@@ -105,6 +105,14 @@ func PhoneValidator(phone string) error {
 }
 
 // PROPERTIES
+func PropertyExist(db *gorm.DB, propertyID uint) error {
+	var property models.Property
+	err := db.First(&property, propertyID).Error
+	if err != nil {
+		return errors.New("property not found")
+	}
+	return nil
+}
 func PropertyUserChecker(db *gorm.DB, userID, propertyID uint) error {
 	var userProperty models.UserProperties
 	err := db.

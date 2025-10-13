@@ -27,14 +27,14 @@ func PropertyTenantImageCreate(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		propertyID, err := strconv.ParseUint(vars["property-id"], 10, 64)
+		propertyID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid property id", http.StatusBadRequest)
 			return
 		}
 		err = utils.PropertyUserChecker(db, userID, uint(propertyID))
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -46,7 +46,6 @@ func PropertyTenantImageCreate(db *gorm.DB) http.HandlerFunc {
 		}
 		files := r.MultipartForm.File["images"]
 		var uploaded []models.Image
-
 		for _, header := range files {
 			file, err := header.Open()
 			if err != nil {
@@ -83,12 +82,20 @@ func PropertyTenantImageCreate(db *gorm.DB) http.HandlerFunc {
 
 			uploaded = append(uploaded, img)
 		}
+		var uploadedResponses []models.ImageResponse
+		for _, img := range uploaded {
+			uploadedResponses = append(uploadedResponses, models.ImageResponse{
+				ID:         img.ID,
+				PropertyID: img.PropertyID,
+				Path:       img.Path,
+			})
+		}
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "images added to property",
-			Data:    uploaded,
+			Data:    uploadedResponses,
 		}, http.StatusCreated)
 	}
 }

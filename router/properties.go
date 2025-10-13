@@ -9,21 +9,29 @@ import (
 )
 
 func RegisterPropertyRoutes(r *mux.Router, db *gorm.DB) {
-	r.HandleFunc("/api/property/list", handlers.PropertyList(db)).Methods("GET")
-	r.HandleFunc("/api/property/get/{property-id}", handlers.PropertyGet(db)).Methods("GET")
-	r.HandleFunc("/api/property/image/list/{property-id}", handlers.PropertyImageList(db)).Methods("GET")
+	// PUBLIC
+	public := r.PathPrefix("/api/v1/public/properties").Subrouter()
+	public.HandleFunc("", handlers.PropertyList(db)).Methods("GET")
+	public.HandleFunc("/{id}", handlers.PropertyGet(db)).Methods("GET")
+	public.HandleFunc("/{id}/images", handlers.PropertyImageList(db)).Methods("GET")
 
-	r.Handle("/api/property/tenant/list", middleware.JwtAuthUser(handlers.PropertyTenantList(db))).Methods("GET")
-	r.Handle("/api/property/tenant/get/{property-id}", middleware.JwtAuthUser(handlers.PropertyTenantGet(db))).Methods("GET")
-	r.Handle("/api/property/tenant/create", middleware.JwtAuthUser(handlers.PropertyTenantCreate(db))).Methods("POST")
-	r.Handle("/api/property/tenant/delete/{property-id}", middleware.JwtAuthUser(handlers.PropertyTenantDelete(db))).Methods("DELETE")
-	r.Handle("/api/property/tenant/edit/{property-id}", middleware.JwtAuthUser(handlers.PropertyTenantEdit(db))).Methods("PATCH")
+	// TENANT
+	tenant := r.PathPrefix("/api/v1/tenant/properties").Subrouter()
+	tenant.Use(middleware.JwtAuthUser)
+	tenant.Handle("", handlers.PropertyTenantList(db)).Methods("GET")
+	tenant.Handle("", handlers.PropertyTenantCreate(db)).Methods("POST")
+	tenant.Handle("/{id}", handlers.PropertyTenantGet(db)).Methods("GET")
+	tenant.Handle("/{id}", handlers.PropertyTenantEdit(db)).Methods("PATCH")
+	tenant.Handle("/{id}", handlers.PropertyTenantDelete(db)).Methods("DELETE")
+	tenant.Handle("/{id}/images", handlers.PropertyTenantImageList(db)).Methods("GET")
+	tenant.Handle("/{id}/images", handlers.PropertyTenantImageCreate(db)).Methods("POST")
+	tenant.Handle("/{id}/images", handlers.PropertyTenantImageDelete(db)).Methods("DELETE")
 
-	r.Handle("/api/property/tenant/image/create/{property-id}", middleware.JwtAuthUser(handlers.PropertyTenantImageCreate(db))).Methods("POST")
-	r.Handle("/api/property/tenant/image/delete/{property-id}", middleware.JwtAuthUser(handlers.PropertyTenantImageDelete(db))).Methods("DELETE")
-
-	r.Handle("/api/property/admin/list", middleware.JwtAuthAdmin(handlers.PropertyAdminList(db))).Methods("GET")
-	r.Handle("/api/property/admin/get/{property-id}", middleware.JwtAuthAdmin(handlers.PropertyAdminGet(db))).Methods("GET")
-	r.Handle("/api/property/admin/publish/{property-id}", middleware.JwtAuthAdmin(handlers.PropertyAdminPublish(db))).Methods("PATCH")
-	r.Handle("/api/property/admin/draft/{property-id}", middleware.JwtAuthAdmin(handlers.PropertyAdminDraft(db))).Methods("PATCH")
+	// ADMIN
+	admin := r.PathPrefix("/api/v1/admin/properties").Subrouter()
+	admin.Use(middleware.JwtAuthAdmin)
+	admin.Handle("", handlers.PropertyAdminList(db)).Methods("GET")
+	admin.Handle("/{id}", handlers.PropertyAdminGet(db)).Methods("GET")
+	admin.Handle("/{id}/publish", handlers.PropertyAdminPublish(db)).Methods("PATCH")
+	admin.Handle("/{id}/draft", handlers.PropertyAdminDraft(db)).Methods("PATCH")
 }
