@@ -32,12 +32,20 @@ func PropertyImageList(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		var imagesResponses []models.ImageResponse
+		for _, img := range images {
+			imagesResponses = append(imagesResponses, models.ImageResponse{
+				ID:         img.ID,
+				PropertyID: img.PropertyID,
+				Path:       img.Path,
+			})
+		}
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "images returned from property",
-			Data:    images,
+			Data:    imagesResponses,
 		}, http.StatusOK)
 	}
 }
