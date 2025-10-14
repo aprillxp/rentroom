@@ -9,10 +9,15 @@ import (
 )
 
 func RegisterUserRoutes(r *mux.Router, db *gorm.DB) {
-	r.HandleFunc("/api/user/auth/register", handlers.UserRegister(db)).Methods("POST")
-	r.HandleFunc("/api/user/auth/login", handlers.UserLogin(db)).Methods("POST")
-	r.HandleFunc("/api/user/auth/logout", handlers.UserLogout()).Methods("POST")
+	//AUTH
+	auth := r.PathPrefix("/api/v1/user/auth").Subrouter()
+	auth.HandleFunc("/register", handlers.UserRegister(db)).Methods("POST")
+	auth.HandleFunc("/login", handlers.UserLogin(db)).Methods("POST")
+	auth.HandleFunc("/logout", handlers.UserLogout()).Methods("POST")
 
-	r.Handle("/api/user/profile/edit", middleware.JwtAuthUser(handlers.UserEdit(db))).Methods("PATCH")
-	r.Handle("/api/user/profile/get", middleware.JwtAuthUser(handlers.UserGet(db))).Methods("GET")
+	//PROFILE
+	profile := r.PathPrefix("/api/v1/user/profile").Subrouter()
+	profile.Use(middleware.JwtAuthUser)
+	profile.Handle("", handlers.UserGet(db)).Methods("GET")
+	profile.Handle("", handlers.UserEdit(db)).Methods("PATCH")
 }
