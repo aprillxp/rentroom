@@ -27,7 +27,7 @@ func TransactionUserList(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "failed to returned user transactions", http.StatusInternalServerError)
 			return
 		}
-		var transactionUpdated []models.TransactionResponse
+		transactionUpdated := make([]models.TransactionResponse, 0, len(transactions))
 		for _, t := range transactions {
 			transactionUpdated = append(transactionUpdated, models.TransactionResponse{
 				ID:         t.ID,

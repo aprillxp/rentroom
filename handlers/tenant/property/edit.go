@@ -32,7 +32,7 @@ func PropertyTenantEdit(db *gorm.DB) http.HandlerFunc {
 		}
 		err = utils.PropertyUserChecker(db, userID, uint(propertyID))
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		var req models.PropertyEditRequest

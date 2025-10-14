@@ -80,9 +80,9 @@ func TransactionUserCreate(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "failed create transaction", http.StatusInternalServerError)
 			return
 		}
-		transactionUpdated, err := utils.GetUserTransaction(db, userID, transaction.ID)
+		transactionUpdated, err := utils.GetTransaction(db, transaction.ID)
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusNotFound)
 			return
 		}
 

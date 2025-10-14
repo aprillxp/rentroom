@@ -20,7 +20,7 @@ func TransactionUserReview(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		transactionID, err := strconv.ParseUint(vars["transaction-id"], 10, 64)
+		transactionID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return

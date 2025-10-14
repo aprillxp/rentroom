@@ -9,18 +9,27 @@ import (
 )
 
 func RegisterTransactionRoutes(r *mux.Router, db *gorm.DB) {
-	r.Handle("/api/transaction/user/create", middleware.JwtAuthUser(handlers.TransactionUserCreate(db))).Methods("POST")
-	r.Handle("/api/transaction/user/cancel/{transaction-id}", middleware.JwtAuthUser(handlers.TransactionUserCancel(db))).Methods("PATCH")
-	r.Handle("/api/transaction/user/review/{transaction-id}", middleware.JwtAuthUser(handlers.TransactionUserReview(db))).Methods("POST")
-	r.Handle("/api/transaction/user/get/{transaction-id}", middleware.JwtAuthUser(handlers.TransactionUserGet(db))).Methods("GET")
-	r.Handle("/api/transaction/user/list", middleware.JwtAuthUser(handlers.TransactionUserList(db))).Methods("GET")
+	// ADMIN
+	admin := r.PathPrefix("/api/v1/admin/transactions").Subrouter()
+	admin.Use(middleware.JwtAuthAdmin)
+	admin.Handle("", handlers.TransactionAdminUserList(db)).Methods("GET")
+	admin.Handle("/{id}", handlers.TransactionAdminUserGet(db)).Methods("GET")
+	admin.Handle("/{id}/approve", handlers.TransactionAdminApprove(db)).Methods("PATCH")
+	admin.Handle("/{id}/reject", handlers.TransactionAdminReject(db)).Methods("PATCH")
+	admin.Handle("/{id}/done", handlers.TransactionAdminDone(db)).Methods("PATCH")
 
-	r.Handle("/api/transaction/tenant/list", middleware.JwtAuthUser(handlers.TransactionTenantList(db))).Methods("GET")
-	r.Handle("/api/transaction/tenant/get/{transaction-id}", middleware.JwtAuthUser(handlers.TransactionTenantGet(db))).Methods("GET")
+	// TENANT
+	tenant := r.PathPrefix("/api/v1/tenant/transactions").Subrouter()
+	tenant.Use(middleware.JwtAuthUser)
+	tenant.Handle("", handlers.TransactionTenantList(db)).Methods("GET")
+	tenant.Handle("/{id}", handlers.TransactionTenantGet(db)).Methods("GET")
 
-	r.Handle("/api/transaction/admin/approve/{transaction-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminApprove(db))).Methods("PATCH")
-	r.Handle("/api/transaction/admin/reject/{transaction-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminReject(db))).Methods("PATCH")
-	r.Handle("/api/transaction/admin/done/{transaction-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminDone(db))).Methods("PATCH")
-	r.Handle("/api/transaction/admin/list/{user-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminUserList(db))).Methods("GET")
-	r.Handle("/api/transaction/admin/get/{transaction-id}", middleware.JwtAuthAdmin(handlers.TransactionAdminUserGet(db))).Methods("GET")
+	// USER
+	user := r.PathPrefix("/api/v1/user/transactions").Subrouter()
+	user.Use(middleware.JwtAuthUser)
+	user.Handle("", handlers.TransactionUserList(db)).Methods("GET")
+	user.Handle("", handlers.TransactionUserCreate(db)).Methods("POST")
+	user.Handle("/{id}", handlers.TransactionUserGet(db)).Methods("GET")
+	user.Handle("/{id}/cancel", handlers.TransactionUserCancel(db)).Methods("PATCH")
+	user.Handle("/{id}/review", handlers.TransactionUserReview(db)).Methods("POST")
 }

@@ -178,6 +178,14 @@ func PropertyHaveAnActiveTransaction(db *gorm.DB, propertyId uint) error {
 }
 
 // TRANSACTION
+func TransactionExist(db *gorm.DB, tranacstionID uint) error {
+	var transaction models.Transaction
+	err := db.First(&transaction, tranacstionID).Error
+	if err != nil {
+		return errors.New("transaction not found")
+	}
+	return nil
+}
 func TransactionUserChecker(db *gorm.DB, userID uint, transactionID uint) error {
 	var userTrasaction models.Transaction
 	err := db.
@@ -198,16 +206,6 @@ func TransactionOwnedByUser(db *gorm.DB, userID, propertyID uint) error {
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil
-	}
-	return err
-}
-func TransactionTenantChecker(db *gorm.DB, propertyIDs []uint, transactionID uint) error {
-	var tenantTransaction models.Transaction
-	err := db.
-		Where("id = ? AND property_id IN ?", transactionID, propertyIDs).
-		Find(&tenantTransaction).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return errors.New("transaction does not exist")
 	}
 	return err
 }
