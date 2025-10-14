@@ -34,7 +34,7 @@ func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
 		// QUERY
 		propertyIDs, err := utils.GetPropertyIDs(db, userID)
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			utils.JSONError(w, err.Error(), http.StatusNotFound)
 			return
 		}
 		var transaction models.Transaction
@@ -42,7 +42,7 @@ func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
 			Where("id = ? AND property_id IN ?", transactionID, propertyIDs).
 			First(&transaction).Error
 		if err != nil {
-			utils.JSONError(w, "transaction not found", http.StatusInternalServerError)
+			utils.JSONError(w, "transaction not found", http.StatusNotFound)
 			return
 		}
 

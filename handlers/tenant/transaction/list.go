@@ -26,7 +26,7 @@ func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
 		// QUERY
 		propertyIDs, err := utils.GetPropertyIDs(db, userID)
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			utils.JSONError(w, err.Error(), http.StatusNotFound)
 			return
 		}
 		var transactions []models.Transaction
