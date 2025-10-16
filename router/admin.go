@@ -8,5 +8,7 @@ import (
 )
 
 func RegisterAdminRoutes(r *mux.Router, db *gorm.DB) {
-	r.HandleFunc("/api/admin/auth/login", handlers.AdminLogin(db)).Methods("POST")
+	// AUTH
+	auth := r.PathPrefix("/api/v1/admin/auth").Subrouter()
+	auth.HandleFunc("/login", handlers.AdminLogin(db)).Methods("POST")
 }
