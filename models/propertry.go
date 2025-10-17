@@ -70,7 +70,7 @@ type PropertyEditRequest struct {
 	Amenities        *[]uint    `json:"amenities" validate:"omitempty,min=1"`
 }
 
-type ProperyPaginatedResponse struct {
+type PropertiesPaginatedResponse struct {
 	Items      []Property `json:"items"`
 	Page       *int       `json:"page"`
 	Limit      *int       `json:"limit"`

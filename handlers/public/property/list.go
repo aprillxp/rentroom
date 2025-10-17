@@ -53,7 +53,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		totalPages := (int(total) + limit - 1) / limit
 
 		// UPDATED n MODIFIED RESPONSE
-		response := models.ProperyPaginatedResponse{
+		response := models.PropertiesPaginatedResponse{
 			Items:      properties,
 			Page:       &page,
 			Limit:      &limit,
