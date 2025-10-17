@@ -69,3 +69,11 @@ type PropertyEditRequest struct {
 	Zip              *string    `json:"zip" validate:"omitempty,gt=0"`
 	Amenities        *[]uint    `json:"amenities" validate:"omitempty,min=1"`
 }
+
+type ProperyPaginatedResponse struct {
+	Items      []Property `json:"items"`
+	Page       *int       `json:"page"`
+	Limit      *int       `json:"limit"`
+	TotalItems *int64     `json:"total-items"`
+	TotalPages *int       `json:"total-pages"`
+}

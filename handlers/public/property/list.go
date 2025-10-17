@@ -52,17 +52,19 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		// ADD (Count the total pages)
 		totalPages := (int(total) + limit - 1) / limit
 
-		// MODIFIED RESPONSE
+		// UPDATED n MODIFIED RESPONSE
+		response := models.ProperyPaginatedResponse{
+			Items:      properties,
+			Page:       &page,
+			Limit:      &limit,
+			TotalItems: &total,
+			TotalPages: &totalPages,
+		}
+
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "properties returned",
-			Data: map[string]any{
-				"items":       properties,
-				"page":        page,
-				"limit":       limit,
-				"total_items": total,
-				"total_pages": totalPages,
-			},
+			Data:    response,
 		}, http.StatusOK)
 	}
 }
