@@ -21,7 +21,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		// PARSING PAGE & LIMIT
 		page, err := strconv.Atoi(pageStr)
 		if err != nil || page < 1 {
-			page = 10
+			page = 1
 		}
 		limit, err := strconv.Atoi(limitStr)
 		if err != nil || limit < 1 {
@@ -56,7 +56,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "properties returned",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"items":       properties,
 				"page":        page,
 				"limit":       limit,
