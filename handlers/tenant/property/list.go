@@ -24,10 +24,12 @@ func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		countryID := r.URL.Query().Get("country")
-		pageStr := r.URL.Query().Get("page")   // Add query page
-		limitStr := r.URL.Query().Get("limit") // Add query limit
 
-		// Parsing page and add limit
+		// ADD (Query params for pagination)
+		pageStr := r.URL.Query().Get("page")
+		limitStr := r.URL.Query().Get("limit")
+
+		// ADD (Parsing page and limit)
 		page, err := strconv.Atoi(pageStr)
 		if err != nil || page < 1 {
 			page = 1
@@ -38,7 +40,6 @@ func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
 		}
 		offset := (page - 1) * limit
 
-		// QUERY
 		propertyIDs, err := utils.GetPropertyIDs(db, userID)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusNotFound)
@@ -52,17 +53,21 @@ func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
 			query = query.Where("id IN ?", propertyIDs)
 		}
 
+		// ADD (Count the total before limit)
 		var total int64
-		query.Model(&models.Property{}).Count(&total) // Count the total before limit.
+		query.Model(&models.Property{}).Count(&total)
 
-		err = query.Limit(limit).Offset(offset).Find(&properties).Error // Apply pagination limit and offset
+		// MODIFIED (Apply pagination limit and offset)
+		err = query.Limit(limit).Offset(offset).Find(&properties).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		totalPages := (int(total) + limit - 1) / limit // Count the total pages
+		// ADD (Count the total pages)
+		totalPages := (int(total) + limit - 1) / limit
 
-		response := models.PropertiesPaginatedResponse{ // Using struct response
+		// UPDATE and MODIFIED (Using struct for the pagination responses)
+		response := models.PropertiesPaginatedResponse{
 			Items:      properties,
 			Page:       &page,
 			Limit:      &limit,

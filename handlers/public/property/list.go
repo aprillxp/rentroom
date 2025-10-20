@@ -18,7 +18,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		pageStr := r.URL.Query().Get("page")
 		limitStr := r.URL.Query().Get("limit")
 
-		// PARSING PAGE & LIMIT
+		// ADD (Parsing page and limit)
 		page, err := strconv.Atoi(pageStr)
 		if err != nil || page < 1 {
 			page = 1
@@ -28,7 +28,6 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 			limit = 10
 		}
 		offset := (page - 1) * limit
-		// =========================
 
 		var properties []models.Property
 		query := db
@@ -42,7 +41,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		var total int64
 		query.Model(&models.Property{}).Count(&total)
 
-		// MODIFIED (Add limit and offset)
+		// MODIFIED (Apply pagination limit and offset)
 		err = query.Offset(offset).Limit(limit).Find(&properties).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
@@ -52,7 +51,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		// ADD (Count the total pages)
 		totalPages := (int(total) + limit - 1) / limit
 
-		// UPDATED n MODIFIED RESPONSE
+		// UPDATE and MODIFIED (Using struct for the pagination responses)
 		response := models.PropertiesPaginatedResponse{
 			Items:      properties,
 			Page:       &page,
@@ -61,6 +60,7 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 			TotalPages: &totalPages,
 		}
 
+		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "properties returned",
