@@ -13,7 +13,7 @@ func VoucherAdminGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		vars := mux.Vars(r)
-		voucherID, err := strconv.ParseUint(vars["voucher-id"], 10, 64)
+		voucherID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid voucher id", http.StatusBadRequest)
 			return
