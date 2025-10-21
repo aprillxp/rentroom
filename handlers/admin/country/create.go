@@ -35,7 +35,7 @@ func CountryAdminCreate(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// QUERY
-		country := models.CountryRequest{
+		country := models.Country{
 			Name:        req.Name,
 			Description: req.Description,
 		}

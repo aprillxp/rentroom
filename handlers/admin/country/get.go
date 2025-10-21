@@ -2,7 +2,6 @@ package admin
 
 import (
 	"net/http"
-	"os"
 	"rentroom/middleware"
 	"rentroom/utils"
 	"strconv"
@@ -11,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func CountryAdminImageDelete(db *gorm.DB) http.HandlerFunc {
+func CountryAdminGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		err := middleware.MustAdminID(r)
@@ -25,30 +24,9 @@ func CountryAdminImageDelete(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "invalid country id", http.StatusBadRequest)
 			return
 		}
-		err = utils.CountryValidator(db, uint(countryID))
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
 
 		// QUERY
 		country, err := utils.GetCountry(db, int(countryID))
-		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		if country.Path == nil {
-			utils.JSONError(w, "country does not have image", http.StatusInternalServerError)
-			return
-		}
-		err = os.Remove("." + *country.Path)
-		if err != nil && !os.IsNotExist(err) {
-			utils.JSONError(w, "failed to delete image file", http.StatusInternalServerError)
-			return
-		}
-		err = db.
-			Model(&country).
-			Update("path", nil).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
@@ -57,7 +35,7 @@ func CountryAdminImageDelete(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "image deleted from country",
+			Message: "country returned",
 			Data:    country,
 		}, http.StatusOK)
 	}

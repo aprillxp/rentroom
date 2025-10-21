@@ -22,9 +22,14 @@ func CountryAdminImageCreate(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		countryID, err := strconv.ParseUint(vars["country-id"], 10, 64)
+		countryID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid country id", http.StatusBadRequest)
+			return
+		}
+		err = utils.CountryValidator(db, uint(countryID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 

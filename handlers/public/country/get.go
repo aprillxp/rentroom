@@ -13,7 +13,7 @@ func CountryGet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		vars := mux.Vars(r)
-		countryID, err := strconv.ParseUint(vars["country-id"], 10, 64)
+		countryID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid country id", http.StatusBadRequest)
 			return
@@ -22,7 +22,7 @@ func CountryGet(db *gorm.DB) http.HandlerFunc {
 		// QUERY
 		country, err := utils.GetCountry(db, int(countryID))
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
