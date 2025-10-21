@@ -37,12 +37,13 @@ func TransactionTenantList(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		transactionsUpdated := utils.ConvertTransactionsResponse(transactions)
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "tenant transactions returned",
-			Data:    transactions,
+			Data:    transactionsUpdated,
 		}, http.StatusOK)
 	}
 }
