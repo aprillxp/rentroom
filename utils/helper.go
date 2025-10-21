@@ -102,6 +102,7 @@ func ConvertTransactionsResponse(transactions []models.Transaction) []models.Tra
 	for _, t := range transactions {
 		responses = append(responses, models.TransactionResponse{
 			ID:         t.ID,
+			UserID:     t.ID,
 			PropertyID: t.PropertyID,
 			Price:      t.Price,
 			CheckIn:    t.CheckIn,
@@ -111,4 +112,16 @@ func ConvertTransactionsResponse(transactions []models.Transaction) []models.Tra
 		})
 	}
 	return responses
+}
+
+func ConvertTransactionResponse(transaction models.Transaction) models.TransactionResponse {
+	return models.TransactionResponse{
+		ID:         transaction.ID,
+		PropertyID: transaction.PropertyID,
+		Price:      transaction.Price,
+		CheckIn:    transaction.CheckIn,
+		CheckOut:   transaction.CheckOut,
+		Status:     transaction.Status,
+		VoucherID:  transaction.VoucherID,
+	}
 }
