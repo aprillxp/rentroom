@@ -45,12 +45,13 @@ func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "transaction not found", http.StatusNotFound)
 			return
 		}
+		transactionUpdated := utils.ConvertTransactionResponse(transaction)
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "transaction returned",
-			Data:    transaction,
+			Data:    transactionUpdated,
 		}, http.StatusOK)
 
 	}

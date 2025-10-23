@@ -63,8 +63,17 @@ func AdminLogin(db *gorm.DB) http.HandlerFunc {
 }
 
 // ADMIN > COUNTRY
+func CountryAdminList(db *gorm.DB) http.HandlerFunc {
+	return countryAdmin.CountryAdminList(db)
+}
+func CountryAdminGet(db *gorm.DB) http.HandlerFunc {
+	return countryAdmin.CountryAdminGet(db)
+}
 func CountryAdminCreate(db *gorm.DB) http.HandlerFunc {
 	return countryAdmin.CountryAdminCreate(db)
+}
+func CountryAdminDelete(db *gorm.DB) http.HandlerFunc {
+	return countryAdmin.CountryAdminDelete(db)
 }
 
 // ADMIN > COUNTRY > IMAGE

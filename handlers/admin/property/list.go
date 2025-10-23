@@ -45,23 +45,13 @@ func PropertyAdminList(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// ADD (Count the total pages)
-		totalPages := (int(total) + limit - 1) / limit
-
-		// UPDATE and MODIFIED (Using struct for the pagination responses)
-		response := models.PropertiesPaginatedResponse{
-			Items:      properties,
-			Page:       &page,
-			Limit:      &limit,
-			TotalItems: &total,
-			TotalPages: &totalPages,
-		}
+		propertiesUpdated := utils.ConvertPropertiesResponse(properties)
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "properties returned",
-			Data:    response,
+			Data:    propertiesUpdated,
 		}, http.StatusOK)
 	}
 }

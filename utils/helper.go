@@ -72,3 +72,56 @@ func PathImage(header *multipart.FileHeader) (fsPath, publicPath string) {
 	publicPath = "/uploads/" + filename
 	return
 }
+
+func ConvertPropertiesResponse(properties []models.Property) []models.PropertyResponse {
+	responses := make([]models.PropertyResponse, 0, len(properties))
+	for _, p := range properties {
+		responses = append(responses, models.PropertyResponse{
+			ID:               p.ID,
+			CountryID:        p.CountryID,
+			Name:             p.Name,
+			Guests:           p.Guests,
+			Price:            p.Price,
+			Status:           p.Status,
+			DisabledDateFrom: p.DisabledDateFrom,
+			DisabledDateTo:   p.DisabledDateTo,
+			Description:      p.Description,
+			Geo:              p.Geo,
+			Province:         p.Province,
+			District:         p.District,
+			City:             p.City,
+			Address:          p.Address,
+			Zip:              p.Zip,
+		})
+	}
+	return responses
+}
+
+func ConvertTransactionsResponse(transactions []models.Transaction) []models.TransactionResponse {
+	responses := make([]models.TransactionResponse, 0, len(transactions))
+	for _, t := range transactions {
+		responses = append(responses, models.TransactionResponse{
+			ID:         t.ID,
+			UserID:     t.ID,
+			PropertyID: t.PropertyID,
+			Price:      t.Price,
+			CheckIn:    t.CheckIn,
+			CheckOut:   t.CheckOut,
+			Status:     t.Status,
+			VoucherID:  t.VoucherID,
+		})
+	}
+	return responses
+}
+
+func ConvertTransactionResponse(transaction models.Transaction) models.TransactionResponse {
+	return models.TransactionResponse{
+		ID:         transaction.ID,
+		PropertyID: transaction.PropertyID,
+		Price:      transaction.Price,
+		CheckIn:    transaction.CheckIn,
+		CheckOut:   transaction.CheckOut,
+		Status:     transaction.Status,
+		VoucherID:  transaction.VoucherID,
+	}
+}

@@ -70,10 +70,20 @@ type PropertyEditRequest struct {
 	Amenities        *[]uint    `json:"amenities" validate:"omitempty,min=1"`
 }
 
-type PropertiesPaginatedResponse struct {
-	Items      []Property `json:"items"`
-	Page       *int       `json:"page"`
-	Limit      *int       `json:"limit"`
-	TotalItems *int64     `json:"total-items"`
-	TotalPages *int       `json:"total-pages"`
+type PropertyResponse struct {
+	ID               uint      `json:"id"`
+	Name             string    `json:"name"`
+	CountryID        uint      `json:"country_id"`
+	Guests           int       `json:"guests"`
+	Price            float64   `json:"price"`
+	Status           int       `json:"status"`
+	DisabledDateFrom time.Time `gorm:"type:date" json:"disabled_date_from"`
+	DisabledDateTo   time.Time `gorm:"type:date" json:"disabled_date_to"`
+	Description      string    `json:"description"`
+	Geo              string    `json:"geo"`
+	Province         string    `json:"province"`
+	District         string    `json:"district"`
+	City             string    `json:"city"`
+	Address          string    `json:"address"`
+	Zip              string    `json:"zip"`
 }

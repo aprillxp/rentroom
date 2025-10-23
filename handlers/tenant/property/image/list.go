@@ -43,7 +43,7 @@ func PropertyTenantImageList(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		var imagesResponses []models.ImageResponse
+		imagesResponses := make([]models.ImageResponse, 0)
 		for _, img := range images {
 			imagesResponses = append(imagesResponses, models.ImageResponse{
 				ID:         img.ID,

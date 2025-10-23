@@ -30,6 +30,7 @@ type TransactionRequest struct {
 
 type TransactionResponse struct {
 	ID         uint      `json:"id"`
+	UserID     uint      `json:"user_id"`
 	PropertyID uint      `json:"property_id"`
 	Price      float64   `json:"price"`
 	CheckIn    time.Time `gorm:"type:date" json:"check_in"`

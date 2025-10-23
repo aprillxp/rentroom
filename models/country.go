@@ -3,7 +3,7 @@ package models
 type Country struct {
 	ID          uint    `gorm:"primaryKey" json:"id"`
 	Name        string  `json:"name"`
-	Path        *string `json:"banner"`
+	Path        *string `json:"path"`
 	Description *string `json:"description"`
 }
 type CountryRequest struct {

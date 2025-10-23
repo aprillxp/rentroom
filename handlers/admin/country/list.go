@@ -2,25 +2,26 @@ package admin
 
 import (
 	"net/http"
+	"rentroom/middleware"
+	"rentroom/models"
 	"rentroom/utils"
-	"strconv"
 
-	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
-func VoucherAdminGet(db *gorm.DB) http.HandlerFunc {
+func CountryAdminList(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
-		vars := mux.Vars(r)
-		voucherID, err := strconv.ParseUint(vars["id"], 10, 64)
+		err := middleware.MustAdminID(r)
 		if err != nil {
-			utils.JSONError(w, "invalid voucher id", http.StatusBadRequest)
+			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
 		// QUERY
-		voucher, err := utils.GetVoucher(db, int(voucherID))
+		var countries []models.Country
+		err = db.
+			Find(&countries).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -29,8 +30,8 @@ func VoucherAdminGet(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "voucher returned",
-			Data:    voucher,
+			Message: "country list returned",
+			Data:    countries,
 		}, http.StatusOK)
 	}
 }

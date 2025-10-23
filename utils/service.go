@@ -67,6 +67,7 @@ func GetTransaction(db *gorm.DB, transactionID uint) (models.TransactionResponse
 	}
 	return models.TransactionResponse{
 		ID:         transaction.ID,
+		UserID:     transaction.UserID,
 		PropertyID: transaction.PropertyID,
 		Price:      transaction.Price,
 		CheckIn:    transaction.CheckIn,
