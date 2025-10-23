@@ -47,7 +47,7 @@ func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "tenant transactions returned",
+			Message: "tenant properties returned",
 			Data:    propertiesUpdated,
 		}, http.StatusOK)
 	}
