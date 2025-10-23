@@ -8,9 +8,9 @@ import (
 	propertyAdmin "rentroom/handlers/admin/property"
 	transactionAdmin "rentroom/handlers/admin/transaction"
 	voucherAdmin "rentroom/handlers/admin/voucher"
-	country "rentroom/handlers/country"
-	property "rentroom/handlers/property"
-	propertyImage "rentroom/handlers/property/image"
+	country "rentroom/handlers/public/country"
+	property "rentroom/handlers/public/property"
+	propertyImage "rentroom/handlers/public/property/image"
 	propertyTenant "rentroom/handlers/tenant/property"
 	propertyTenantImage "rentroom/handlers/tenant/property/image"
 	transactionTenant "rentroom/handlers/tenant/transaction"
@@ -63,8 +63,17 @@ func AdminLogin(db *gorm.DB) http.HandlerFunc {
 }
 
 // ADMIN > COUNTRY
+func CountryAdminList(db *gorm.DB) http.HandlerFunc {
+	return countryAdmin.CountryAdminList(db)
+}
+func CountryAdminGet(db *gorm.DB) http.HandlerFunc {
+	return countryAdmin.CountryAdminGet(db)
+}
 func CountryAdminCreate(db *gorm.DB) http.HandlerFunc {
 	return countryAdmin.CountryAdminCreate(db)
+}
+func CountryAdminDelete(db *gorm.DB) http.HandlerFunc {
+	return countryAdmin.CountryAdminDelete(db)
 }
 
 // ADMIN > COUNTRY > IMAGE
@@ -138,6 +147,9 @@ func PropertyTenantGet(db *gorm.DB) http.HandlerFunc {
 }
 
 // TENANT > PROPERTY > IMAGE
+func PropertyTenantImageList(db *gorm.DB) http.HandlerFunc {
+	return propertyTenantImage.PropertyTenantImageList(db)
+}
 func PropertyTenantImageCreate(db *gorm.DB) http.HandlerFunc {
 	return propertyTenantImage.PropertyTenantImageCreate(db)
 }

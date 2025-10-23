@@ -27,7 +27,7 @@ func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
 		// QUERY
 		propertyIDs, err := utils.GetPropertyIDs(db, userID)
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusNotFound)
 			return
 		}
 		var properties []models.Property
@@ -42,12 +42,13 @@ func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
+		propertiesUpdated := utils.ConvertPropertiesResponse(properties)
+		
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "tenant transactions returned",
-			Data:    properties,
+			Message: "tenant properties returned",
+			Data:    propertiesUpdated,
 		}, http.StatusOK)
 	}
 }

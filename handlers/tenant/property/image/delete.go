@@ -26,7 +26,7 @@ func PropertyTenantImageDelete(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		propertyID, err := strconv.ParseUint(vars["property-id"], 10, 64)
+		propertyID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid property id", http.StatusBadRequest)
 			return
@@ -52,7 +52,7 @@ func PropertyTenantImageDelete(db *gorm.DB) http.HandlerFunc {
 		var images []models.Image
 		err = db.
 			Where("property_id = ? AND id IN ?", propertyID, req.ImageIds).
-			Find(&images).Error
+			First(&images).Error
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return

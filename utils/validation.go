@@ -105,6 +105,14 @@ func PhoneValidator(phone string) error {
 }
 
 // PROPERTIES
+func PropertyExist(db *gorm.DB, propertyID uint) error {
+	var property models.Property
+	err := db.First(&property, propertyID).Error
+	if err != nil {
+		return errors.New("property not found")
+	}
+	return nil
+}
 func PropertyUserChecker(db *gorm.DB, userID, propertyID uint) error {
 	var userProperty models.UserProperties
 	err := db.
@@ -170,6 +178,14 @@ func PropertyHaveAnActiveTransaction(db *gorm.DB, propertyId uint) error {
 }
 
 // TRANSACTION
+func TransactionExist(db *gorm.DB, tranacstionID uint) error {
+	var transaction models.Transaction
+	err := db.First(&transaction, tranacstionID).Error
+	if err != nil {
+		return errors.New("transaction not found")
+	}
+	return nil
+}
 func TransactionUserChecker(db *gorm.DB, userID uint, transactionID uint) error {
 	var userTrasaction models.Transaction
 	err := db.
@@ -190,16 +206,6 @@ func TransactionOwnedByUser(db *gorm.DB, userID, propertyID uint) error {
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil
-	}
-	return err
-}
-func TransactionTenantChecker(db *gorm.DB, propertyIDs []uint, transactionID uint) error {
-	var tenantTransaction models.Transaction
-	err := db.
-		Where("id = ? AND property_id IN ?", transactionID, propertyIDs).
-		Find(&tenantTransaction).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return errors.New("transaction does not exist")
 	}
 	return err
 }
@@ -254,7 +260,7 @@ func BankValidator(db *gorm.DB, bankID int) error {
 	}
 	return nil
 }
-func CountryValidator(db *gorm.DB, CountryID int) error {
+func CountryValidator(db *gorm.DB, CountryID uint) error {
 	var country models.Country
 	err := db.
 		Select("id").
@@ -302,4 +308,17 @@ func CountryUniqueness(db *gorm.DB, countryName string) error {
 		return nil
 	}
 	return err
+}
+func CountryHaveProperty(db *gorm.DB, countryID uint) error {
+	var countryProperty models.Property
+	err := db.
+		Where("country_id = ?", countryID,).
+		First(&countryProperty).Error
+	if err == nil {
+		return errors.New("cannot perform action, country has an property")
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+	return nil
 }

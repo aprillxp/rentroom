@@ -3,7 +3,6 @@ package admin
 import (
 	"net/http"
 	"rentroom/middleware"
-	"rentroom/models"
 	"rentroom/utils"
 	"strconv"
 
@@ -20,19 +19,16 @@ func TransactionAdminUserGet(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		transactionID, err := strconv.ParseUint(vars["transaction-id"], 10, 64)
+		transactionID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return
 		}
 
 		// QUERY
-		var transaction []models.Transaction
-		err = db.
-			Where("id = ?", transactionID).
-			Find(&transaction).Error
+		transaction, err := utils.GetTransaction(db, uint(transactionID))
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusNotFound)
 			return
 		}
 

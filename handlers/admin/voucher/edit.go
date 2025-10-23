@@ -21,7 +21,7 @@ func VoucherAdminEdit(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		voucherID, err := strconv.ParseUint(vars["voucher-id"], 10, 64)
+		voucherID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid voucher id", http.StatusBadRequest)
 			return
@@ -74,12 +74,17 @@ func VoucherAdminEdit(db *gorm.DB) http.HandlerFunc {
 				return
 			}
 		}
+		voucherUpdated, err := utils.GetVoucher(db, int(voucherID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "voucher updated",
-			Data:    voucher,
+			Data:    voucherUpdated,
 		}, http.StatusCreated)
 	}
 }

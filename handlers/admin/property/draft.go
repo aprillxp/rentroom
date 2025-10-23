@@ -20,14 +20,14 @@ func PropertyAdminDraft(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		propertyID, err := strconv.ParseUint(vars["property-id"], 10, 64)
+		propertyID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
-			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
+			utils.JSONError(w, "invalid property id", http.StatusBadRequest)
 			return
 		}
 		err = utils.PropertyHaveAnActiveTransaction(db, uint(propertyID))
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 

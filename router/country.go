@@ -9,11 +9,18 @@ import (
 )
 
 func RegisterCountryRoutes(r *mux.Router, db *gorm.DB) {
-	r.Handle("/api/country/admin/create", middleware.JwtAuthAdmin(handlers.CountryAdminCreate(db))).Methods("POST")
-
-	r.Handle("/api/country/admin/image/create/{country-id}", middleware.JwtAuthAdmin(handlers.CountryAdminImageCreate(db))).Methods("POST")
-	r.Handle("/api/country/admin/image/delete/{country-id}", middleware.JwtAuthAdmin(handlers.CountryAdminImageDelete(db))).Methods("DELETE")
-
-	r.HandleFunc("/api/country/list", handlers.CountryList(db)).Methods("GET")
-	r.HandleFunc("/api/country/get/{country-id}", handlers.CountryGet(db)).Methods("GET")
+	// ADMIN
+	admin := r.PathPrefix("/api/v1/admin/countries").Subrouter()
+	admin.Use(middleware.JwtAuthAdmin)
+	admin.Handle("", handlers.CountryAdminList(db)).Methods("GET")
+	admin.Handle("", handlers.CountryAdminCreate(db)).Methods("POST")
+	admin.Handle("/{id}", handlers.CountryAdminGet(db)).Methods("GET")
+	admin.Handle("/{id}", handlers.CountryAdminDelete(db)).Methods("DELETE")
+	admin.Handle("/{id}/images", handlers.CountryAdminImageCreate(db)).Methods("POST")
+	admin.Handle("/{id}/images", handlers.CountryAdminImageDelete(db)).Methods("DELETE")
+	
+	// PUBLIC
+	public := r.PathPrefix("/api/v1/public/countries").Subrouter()
+	public.HandleFunc("", handlers.CountryList(db)).Methods("GET")
+	public.HandleFunc("/{id}", handlers.CountryGet(db)).Methods("GET")
 }

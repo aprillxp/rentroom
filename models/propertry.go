@@ -25,6 +25,8 @@ type Property struct {
 	City             string    `json:"city"`
 	Address          string    `json:"address"`
 	Zip              string    `json:"zip"`
+
+	Images []Image `gorm:"constraint:OnDelete:CASCADE"`
 }
 
 type PropertyAmenities struct {
@@ -66,4 +68,22 @@ type PropertyEditRequest struct {
 	Address          *string    `json:"address" validate:"omitempty,min=5"`
 	Zip              *string    `json:"zip" validate:"omitempty,gt=0"`
 	Amenities        *[]uint    `json:"amenities" validate:"omitempty,min=1"`
+}
+
+type PropertyResponse struct {
+	ID               uint      `json:"id"`
+	Name             string    `json:"name"`
+	CountryID        uint      `json:"country_id"`
+	Guests           int       `json:"guests"`
+	Price            float64   `json:"price"`
+	Status           int       `json:"status"`
+	DisabledDateFrom time.Time `gorm:"type:date" json:"disabled_date_from"`
+	DisabledDateTo   time.Time `gorm:"type:date" json:"disabled_date_to"`
+	Description      string    `json:"description"`
+	Geo              string    `json:"geo"`
+	Province         string    `json:"province"`
+	District         string    `json:"district"`
+	City             string    `json:"city"`
+	Address          string    `json:"address"`
+	Zip              string    `json:"zip"`
 }

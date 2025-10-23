@@ -11,7 +11,7 @@ func JwtAuthUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c, err := r.Cookie("jwt_token_user")
 		if err != nil {
-			http.Error(w, "unauthorized", http.StatusInternalServerError)
+			utils.JSONError(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
 		claims, err := Validate(c, "user")
@@ -39,7 +39,7 @@ func JwtAuthAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c, err := r.Cookie("jwt_token_admin")
 		if err != nil {
-			http.Error(w, "unauthorized", http.StatusInternalServerError)
+			utils.JSONError(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
 		claims, err := Validate(c, "admin")

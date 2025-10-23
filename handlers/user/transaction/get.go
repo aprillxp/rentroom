@@ -19,16 +19,21 @@ func TransactionUserGet(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		transactionID, err := strconv.ParseUint(vars["transaction-id"], 10, 64)
+		transactionID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return
 		}
 
 		// QUERY
-		transaction, err := utils.GetUserTransaction(db, userID, uint(transactionID))
+		err = utils.TransactionUserChecker(db, userID, uint(transactionID))
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusNotFound)
+			return
+		}
+		transaction, err := utils.GetTransaction(db, uint(transactionID))
+		if err != nil {
+			utils.JSONError(w, err.Error(), http.StatusNotFound)
 			return
 		}
 

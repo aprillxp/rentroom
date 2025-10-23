@@ -67,44 +67,7 @@ func GetTransaction(db *gorm.DB, transactionID uint) (models.TransactionResponse
 	}
 	return models.TransactionResponse{
 		ID:         transaction.ID,
-		PropertyID: transaction.PropertyID,
-		Price:      transaction.Price,
-		CheckIn:    transaction.CheckIn,
-		CheckOut:   transaction.CheckOut,
-		Status:     transaction.Status,
-		VoucherID:  transaction.VoucherID,
-	}, nil
-}
-
-func GetUserTransaction(db *gorm.DB, userID, transactionID uint) (models.TransactionResponse, error) {
-	var transaction models.Transaction
-	err := db.
-		Where("id = ? AND user_id = ?", transactionID, userID).
-		First(&transaction).Error
-	if err != nil {
-		return models.TransactionResponse{}, errors.New("transaction not found")
-	}
-	return models.TransactionResponse{
-		ID:         transaction.ID,
-		PropertyID: transaction.PropertyID,
-		Price:      transaction.Price,
-		CheckIn:    transaction.CheckIn,
-		CheckOut:   transaction.CheckOut,
-		Status:     transaction.Status,
-		VoucherID:  transaction.VoucherID,
-	}, nil
-}
-
-func GetTenantTransaction(db *gorm.DB, propertyIDs []uint, transactionID uint) (models.TransactionResponse, error) {
-	var transaction models.Transaction
-	err := db.
-		Where("id = ? AND property_id IN ?", transactionID, propertyIDs).
-		First(&transaction).Error
-	if err != nil {
-		return models.TransactionResponse{}, errors.New("transaction not found")
-	}
-	return models.TransactionResponse{
-		ID:         transaction.ID,
+		UserID:     transaction.UserID,
 		PropertyID: transaction.PropertyID,
 		Price:      transaction.Price,
 		CheckIn:    transaction.CheckIn,

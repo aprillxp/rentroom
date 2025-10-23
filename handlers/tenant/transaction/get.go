@@ -25,7 +25,7 @@ func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		vars := mux.Vars(r)
-		transactionID, err := strconv.ParseUint(vars["transaction-id"], 10, 64)
+		transactionID, err := strconv.ParseUint(vars["id"], 10, 64)
 		if err != nil {
 			utils.JSONError(w, "invalid transaction id", http.StatusBadRequest)
 			return
@@ -34,23 +34,24 @@ func TransactionTenantGet(db *gorm.DB) http.HandlerFunc {
 		// QUERY
 		propertyIDs, err := utils.GetPropertyIDs(db, userID)
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusNotFound)
 			return
 		}
-		var transaction []models.Transaction
+		var transaction models.Transaction
 		err = db.
 			Where("id = ? AND property_id IN ?", transactionID, propertyIDs).
-			Find(&transaction).Error
+			First(&transaction).Error
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			utils.JSONError(w, "transaction not found", http.StatusNotFound)
 			return
 		}
+		transactionUpdated := utils.ConvertTransactionResponse(transaction)
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "transaction returned",
-			Data:    transaction,
+			Data:    transactionUpdated,
 		}, http.StatusOK)
 
 	}
