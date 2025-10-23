@@ -16,4 +16,5 @@ func InitRedis() {
 		Password: os.Getenv("REDIS_PASSWORD"),
 		DB:       0,
 	})
+
 }
