@@ -51,27 +51,13 @@ func PropertyList(db *gorm.DB) http.HandlerFunc {
 		propertiesUpdated := utils.ConvertPropertiesResponse(properties)
 
 		// ADD (Count the total pages)
-<<<<<<< HEAD
 		// totalPages := (int(total) + limit - 1) / limit
-=======
-		totalPages := (int(total) + limit - 1) / limit
->>>>>>> 1fb38d5 (refactor(handler/property))
 
 		// MODIFIED RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "properties returned",
-<<<<<<< HEAD
 			Data:    propertiesUpdated,
-=======
-			Data: map[string]any{
-				"items":       properties,
-				"page":        page,
-				"limit":       limit,
-				"total_items": total,
-				"total_pages": totalPages,
-			},
->>>>>>> 1fb38d5 (refactor(handler/property))
 		}, http.StatusOK)
 	}
 }

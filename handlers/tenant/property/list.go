@@ -43,11 +43,11 @@ func PropertyTenantList(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		propertiesUpdated := utils.ConvertPropertiesResponse(properties)
-		
+
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
-			Message: "tenant properties returned",
+			Message: "tenant transactions returned",
 			Data:    propertiesUpdated,
 		}, http.StatusOK)
 	}
