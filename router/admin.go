@@ -1,7 +1,7 @@
 package router
 
 import (
-	"rentroom/handlers"
+	"rentroom/internal/handlers/admin"
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
@@ -10,5 +10,5 @@ import (
 func RegisterAdminRoutes(r *mux.Router, db *gorm.DB) {
 	// AUTH
 	auth := r.PathPrefix("/api/v1/admin/auth").Subrouter()
-	auth.HandleFunc("/login", handlers.AdminLogin(db)).Methods("POST")
+	auth.HandleFunc("/login", admin.Login(db)).Methods("POST")
 }

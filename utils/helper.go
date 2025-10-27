@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"path/filepath"
-	"rentroom/models"
+	"rentroom/internal/models"
 	"strings"
 	"time"
 

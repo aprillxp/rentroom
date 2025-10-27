@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"reflect"
 	"regexp"
-	"rentroom/models"
+	"rentroom/internal/models"
 	"time"
 
 	"github.com/go-playground/validator/v10"
