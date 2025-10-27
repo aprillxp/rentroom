@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"rentroom/config"
-	"rentroom/models"
+	"rentroom/internal/config"
+	"rentroom/internal/models"
 	"rentroom/router"
 	"rentroom/utils"
 
@@ -40,8 +40,8 @@ func main() {
 	utils.InitRedis()
 	r := mux.NewRouter()
 
-	router.RegisterUserRoutes(r, config.DB)
 	router.RegisterAdminRoutes(r, config.DB)
+	router.RegisterUserRoutes(r, config.DB)
 	router.RegisterCountryRoutes(r, config.DB)
 	router.RegisterVoucherRoutes(r, config.DB)
 	router.RegisterPropertyRoutes(r, config.DB)

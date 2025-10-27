@@ -1,7 +1,7 @@
 package router
 
 import (
-	"rentroom/handlers"
+	"rentroom/internal/handlers/transaction"
 	"rentroom/middleware"
 
 	"github.com/gorilla/mux"
@@ -12,24 +12,24 @@ func RegisterTransactionRoutes(r *mux.Router, db *gorm.DB) {
 	// ADMIN
 	admin := r.PathPrefix("/api/v1/admin/transactions").Subrouter()
 	admin.Use(middleware.JwtAuthAdmin)
-	admin.Handle("", handlers.TransactionAdminUserList(db)).Methods("GET")
-	admin.Handle("/{id}", handlers.TransactionAdminUserGet(db)).Methods("GET")
-	admin.Handle("/{id}/approve", handlers.TransactionAdminApprove(db)).Methods("PATCH")
-	admin.Handle("/{id}/reject", handlers.TransactionAdminReject(db)).Methods("PATCH")
-	admin.Handle("/{id}/done", handlers.TransactionAdminDone(db)).Methods("PATCH")
+	admin.Handle("", transaction.AdminUserList(db)).Methods("GET")
+	admin.Handle("/{id}", transaction.AdminUserGet(db)).Methods("GET")
+	admin.Handle("/{id}/approve", transaction.AdminApprove(db)).Methods("PATCH")
+	admin.Handle("/{id}/reject", transaction.AdminReject(db)).Methods("PATCH")
+	admin.Handle("/{id}/done", transaction.AdminDone(db)).Methods("PATCH")
 
 	// TENANT
 	tenant := r.PathPrefix("/api/v1/tenant/transactions").Subrouter()
 	tenant.Use(middleware.JwtAuthUser)
-	tenant.Handle("", handlers.TransactionTenantList(db)).Methods("GET")
-	tenant.Handle("/{id}", handlers.TransactionTenantGet(db)).Methods("GET")
+	tenant.Handle("", transaction.TenantList(db)).Methods("GET")
+	tenant.Handle("/{id}", transaction.TenantGet(db)).Methods("GET")
 
 	// USER
 	user := r.PathPrefix("/api/v1/user/transactions").Subrouter()
 	user.Use(middleware.JwtAuthUser)
-	user.Handle("", handlers.TransactionUserList(db)).Methods("GET")
-	user.Handle("", handlers.TransactionUserCreate(db)).Methods("POST")
-	user.Handle("/{id}", handlers.TransactionUserGet(db)).Methods("GET")
-	user.Handle("/{id}/cancel", handlers.TransactionUserCancel(db)).Methods("PATCH")
-	user.Handle("/{id}/review", handlers.TransactionUserReview(db)).Methods("POST")
+	user.Handle("", transaction.UserList(db)).Methods("GET")
+	user.Handle("", transaction.UserCreate(db)).Methods("POST")
+	user.Handle("/{id}", transaction.UserGet(db)).Methods("GET")
+	user.Handle("/{id}/cancel", transaction.UserCancel(db)).Methods("PATCH")
+	user.Handle("/{id}/review", transaction.UserReview(db)).Methods("POST")
 }
