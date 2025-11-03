@@ -31,22 +31,13 @@ func NormalizePhone(phone string) string {
 }
 
 func SeedInitialData(db *gorm.DB) {
-	banks := []models.Bank{
-		{Name: "BCA"},
-		{Name: "Mandiri"},
-		{Name: "BNI"},
-	}
-	for _, b := range banks {
-		db.FirstOrCreate(&b, models.Bank{Name: b.Name})
-	}
-
 	countries := []models.Country{
 		{Name: "Indonesia"},
 		{Name: "Singapore"},
 		{Name: "Malaysia"},
 	}
 	for _, c := range countries {
-		db.FirstOrCreate(&c, models.Bank{Name: c.Name})
+		db.FirstOrCreate(&c, models.Country{Name: c.Name})
 	}
 
 	amenities := []models.Amenity{
@@ -55,7 +46,7 @@ func SeedInitialData(db *gorm.DB) {
 		{Name: "Pool"},
 	}
 	for _, a := range amenities {
-		db.FirstOrCreate(&a, models.Bank{Name: a.Name})
+		db.FirstOrCreate(&a, models.Amenity{Name: a.Name})
 	}
 }
 

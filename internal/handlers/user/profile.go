@@ -104,8 +104,8 @@ func Edit(db *gorm.DB) http.HandlerFunc {
 			}
 			updates["password"] = hashedPassword
 		}
-		if req.BankID != nil {
-			updates["bank_id"] = *req.BankID
+		if req.Bank != nil {
+			updates["bank_id"] = *req.Bank
 		}
 		if req.BankNumber != nil {
 			updates["bank_number"] = *req.BankNumber
