@@ -25,6 +25,7 @@ func Register(db *gorm.DB) http.HandlerFunc {
 		}
 		req.Username = strings.ToLower(req.Username)
 		req.Email = strings.ToLower(req.Email)
+		req.Bank = strings.ToLower(req.Bank)
 		err = utils.FieldChecker(req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
@@ -57,7 +58,7 @@ func Register(db *gorm.DB) http.HandlerFunc {
 			Email:      req.Email,
 			Phone:      req.Phone,
 			Password:   hashedPassword,
-			BankID:     req.BankID,
+			Bank:       req.Bank,
 			BankNumber: req.BankNumber,
 			IsTenant:   req.IsTenant,
 		}
@@ -66,12 +67,46 @@ func Register(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, "failed create user", http.StatusInternalServerError)
 			return
 		}
+		token, err := utils.GenerateJWT(uint(user.ID), "user")
+		if err != nil {
+			utils.JSONError(w, "token generation failed", http.StatusInternalServerError)
+			return
+		}
+		err = utils.RedisUser.Set(utils.Ctx,
+			"session:user:"+fmt.Sprint(user.ID),
+			token,
+			24*time.Hour,
+		).Err()
+		if err != nil {
+			utils.JSONError(w, "redis", http.StatusInternalServerError)
+			return
+		}
+		http.SetCookie(w, &http.Cookie{
+			Name:     "jwt_token_user",
+			Value:    token,
+			HttpOnly: true,
+			Secure:   false,
+			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
+		})
+		userUpdated := models.UserRegisterResponse{
+			User: models.UserResponse{
+				ID:         user.ID,
+				Username:   user.Username,
+				Email:      user.Email,
+				Phone:      user.Phone,
+				Bank:       user.Bank,
+				BankNumber: user.BankNumber,
+				IsTenant:   user.IsTenant,
+			},
+			Token: token,
+		}
 
 		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "user registered",
-			Data:    user,
+			Data:    userUpdated,
 		}, http.StatusCreated)
 	}
 }
@@ -157,7 +192,7 @@ func Logout() http.HandlerFunc {
 			return
 		}
 		userID := int(claims["id"].(float64))
-		redisKey := fmt.Sprintf("session:client:%d", userID)
+		redisKey := fmt.Sprintf("session:user:%d", userID)
 		utils.RedisUser.Del(utils.Ctx, redisKey)
 
 		http.SetCookie(w, &http.Cookie{
