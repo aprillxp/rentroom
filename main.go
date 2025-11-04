@@ -25,7 +25,6 @@ func main() {
 	}
 	config.DB.AutoMigrate(
 		&models.User{},
-		&models.Bank{},
 		&models.Country{},
 		&models.Amenity{},
 		&models.Property{},

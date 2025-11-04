@@ -18,7 +18,7 @@ func GetUser(db *gorm.DB, userID uint) (models.UserResponse, error) {
 		Username:   user.Username,
 		Email:      user.Email,
 		Phone:      user.Phone,
-		BankID:     user.BankID,
+		Bank:       user.Bank,
 		BankNumber: user.BankNumber,
 		IsTenant:   user.IsTenant,
 	}, nil
