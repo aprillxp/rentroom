@@ -2,6 +2,8 @@ package router
 
 import (
 	"rentroom/internal/handlers/user"
+	repository "rentroom/internal/repositories/user"
+	service "rentroom/internal/services/user"
 	"rentroom/middleware"
 
 	"github.com/gorilla/mux"
@@ -9,15 +11,21 @@ import (
 )
 
 func RegisterUserRoutes(r *mux.Router, db *gorm.DB) {
+	userRepo := repository.NewGormUserRepository(db)
+	userService := service.NewUserService(userRepo)
+
+	authHandler := user.NewAuthHandler(userService)
+	profileHandler := user.NewProfileHandler(userService)
+
 	// AUTH
 	auth := r.PathPrefix("/api/v1/user/auth").Subrouter()
-	auth.HandleFunc("/register", user.Register(db)).Methods("POST")
-	auth.HandleFunc("/login", user.Login(db)).Methods("POST")
-	auth.HandleFunc("/logout", user.Logout()).Methods("POST")
+	auth.HandleFunc("/register", authHandler.Register()).Methods("POST")
+	auth.HandleFunc("/login", authHandler.Login()).Methods("POST")
+	auth.HandleFunc("/logout", authHandler.Logout()).Methods("POST")
 
 	// PROFILE
 	profile := r.PathPrefix("/api/v1/user/profile").Subrouter()
 	profile.Use(middleware.JwtAuthUser)
-	profile.Handle("", user.Get(db)).Methods("GET")
-	profile.Handle("", user.Edit(db)).Methods("PATCH")	
+	profile.Handle("", profileHandler.Get()).Methods("GET")
+	profile.Handle("", profileHandler.Edit()).Methods("PATCH")
 }
