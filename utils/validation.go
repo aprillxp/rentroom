@@ -250,16 +250,6 @@ func TransactionIsDone(db *gorm.DB, transactionID uint) error {
 }
 
 // GENERAL
-func BankValidator(db *gorm.DB, bankID int) error {
-	var bank models.Bank
-	err := db.
-		Select("id").
-		First(&bank, bankID).Error
-	if err != nil {
-		return errors.New("bank id is not found")
-	}
-	return nil
-}
 func CountryValidator(db *gorm.DB, CountryID uint) error {
 	var country models.Country
 	err := db.
@@ -312,7 +302,7 @@ func CountryUniqueness(db *gorm.DB, countryName string) error {
 func CountryHaveProperty(db *gorm.DB, countryID uint) error {
 	var countryProperty models.Property
 	err := db.
-		Where("country_id = ?", countryID,).
+		Where("country_id = ?", countryID).
 		First(&countryProperty).Error
 	if err == nil {
 		return errors.New("cannot perform action, country has an property")

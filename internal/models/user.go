@@ -25,7 +25,7 @@ type UserRegisterRequest struct {
 	Email      string `json:"email" validate:"required,email"`
 	Phone      string `json:"phone" validate:"required"`
 	Password   string `json:"password" validate:"required"`
-	Bank       string `json:"bank" validate:"required,min=3, max=50,alphanum"`
+	Bank       string `json:"bank" validate:"required,min=3,max=50,alphanum"`
 	BankNumber string `json:"bank_number" validate:"required"`
 	IsTenant   bool   `json:"is_tenant"`
 }
@@ -52,4 +52,8 @@ type UserLoginRequest struct {
 }
 type UserLoginResponse struct {
 	Token string `json:"token"`
+}
+type UserRegisterResponse struct {
+	User  UserResponse `json:"user"`
+	Token string       `json:"token"`
 }
