@@ -33,5 +33,5 @@ func RegisterPropertyRoutes(r *mux.Router, db *gorm.DB) {
 	public := r.PathPrefix("/api/v1/public/properties").Subrouter()
 	public.HandleFunc("", property.PublicList(db)).Methods("GET")
 	public.HandleFunc("/{id}", property.PublicGet(db)).Methods("GET")
-	public.HandleFunc("/{id}/images", property.PublicImageList(db)).Methods("GET")
+	// public.HandleFunc("/{id}/images", property.PublicImageList(db)).Methods("GET")
 }

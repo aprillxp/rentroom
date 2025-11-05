@@ -29,11 +29,41 @@ func PublicList(db *gorm.DB) http.HandlerFunc {
 		}
 		propertiesUpdated := utils.ConvertPropertiesResponse(properties)
 
-		// RESPONSE
+		// (ADD images)
+		type PropertyWithImages struct {
+			models.PropertyResponse
+			Images []models.ImageResponse `json:"images"`
+		}
+
+		var result []PropertyWithImages
+
+		for _, property := range propertiesUpdated {
+			var images []models.Image
+			if err := db.Where("property_id = ?", property.ID).Find(&images).Error; err != nil {
+				utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			imageResponse := make([]models.ImageResponse, 0, len(images))
+			for _, img := range images {
+				imageResponse = append(imageResponse, models.ImageResponse{
+					ID:         img.ID,
+					PropertyID: img.PropertyID,
+					Path:       img.Path,
+				})
+			}
+
+			result = append(result, PropertyWithImages{
+				PropertyResponse: property,
+				Images:           imageResponse,
+			})
+		}
+
+		// RESPONSE with images
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "properties returned",
-			Data:    propertiesUpdated,
+			Data:    result,
 		}, http.StatusOK)
 	}
 }
