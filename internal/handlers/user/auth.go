@@ -1,31 +1,41 @@
 package user
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"rentroom/internal/models"
+	services "rentroom/internal/services/user"
 	"rentroom/middleware"
 	"rentroom/utils"
 	"strings"
 	"time"
-
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
-func Register(db *gorm.DB) http.HandlerFunc {
+type AuthHandler struct {
+	userService *services.UserService
+}
+
+func NewAuthHandler(userService *services.UserService) *AuthHandler {
+	return &AuthHandler{userService: userService}
+}
+
+func (h *AuthHandler) Register() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// AUTH
+		// PARSE
 		var req models.UserRegisterRequest
 		err := utils.BodyChecker(r, &req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
+		// NORMALIZE
 		req.Username = strings.ToLower(req.Username)
 		req.Email = strings.ToLower(req.Email)
 		req.Bank = strings.ToLower(req.Bank)
+
+		// VALIDATE
 		err = utils.FieldChecker(req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
@@ -41,18 +51,27 @@ func Register(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = utils.UserUniqueness(db, 0, req.Username, req.Email, req.Phone)
+
+		//UNIQUE
+		errorsMap, err := h.userService.CheckUniqueness(0, &req.Username, &req.Email, &req.Phone)
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if len(errorsMap) > 0 {
+			b, _ := json.Marshal(errorsMap)
+			utils.JSONError(w, string(b), http.StatusBadRequest)
 			return
 		}
 
-		// QUERY
+		// HASHED PASSWORD
 		hashedPassword, err := utils.HashedPassword(req.Password)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// CREATE USER
 		user := models.User{
 			Username:   req.Username,
 			Email:      req.Email,
@@ -62,16 +81,20 @@ func Register(db *gorm.DB) http.HandlerFunc {
 			BankNumber: req.BankNumber,
 			IsTenant:   req.IsTenant,
 		}
-		err = db.Create(&user).Error
+		userResponse, err := h.userService.Create(&user)
 		if err != nil {
-			utils.JSONError(w, "failed create user", http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// CREATE TOKEN
 		token, err := utils.GenerateJWT(uint(user.ID), "user")
 		if err != nil {
 			utils.JSONError(w, "token generation failed", http.StatusInternalServerError)
 			return
 		}
+
+		// CREATE SESSION
 		err = utils.RedisUser.Set(utils.Ctx,
 			"session:user:"+fmt.Sprint(user.ID),
 			token,
@@ -89,16 +112,10 @@ func Register(db *gorm.DB) http.HandlerFunc {
 			Path:     "/",
 			SameSite: http.SameSiteLaxMode,
 		})
-		userUpdated := models.UserRegisterResponse{
-			User: models.UserResponse{
-				ID:         user.ID,
-				Username:   user.Username,
-				Email:      user.Email,
-				Phone:      user.Phone,
-				Bank:       user.Bank,
-				BankNumber: user.BankNumber,
-				IsTenant:   user.IsTenant,
-			},
+
+		// BUILD RESPONSE
+		resp := models.UserRegisterResponse{
+			User:  *userResponse,
 			Token: token,
 		}
 
@@ -106,50 +123,46 @@ func Register(db *gorm.DB) http.HandlerFunc {
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "user registered",
-			Data:    userUpdated,
+			Data:    resp,
 		}, http.StatusCreated)
 	}
 }
 
-func Login(db *gorm.DB) http.HandlerFunc {
+func (h *AuthHandler) Login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// AUTH
+		// PARSE
 		var req models.UserLoginRequest
 		err := utils.BodyChecker(r, &req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
+		// NORMALIZE
 		req.Identifier = strings.ToLower(req.Identifier)
+
+		// VALIDATE
 		err = utils.FieldChecker(req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		// QUERY
-		var user models.User
-		err = db.
-			Where("username = ? OR email = ? OR phone = ?", req.Identifier, req.Identifier, req.Identifier).
-			First(&user).Error
+		// FIND USER
+		user, err := h.userService.Login(req.Identifier, req.Password)
 		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				utils.JSONError(w, "invalid credentials", http.StatusUnauthorized)
-				return
-			}
-			utils.JSONError(w, "database error", http.StatusInternalServerError)
+			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-		if err != nil {
-			utils.JSONError(w, "invalid credentials", http.StatusUnauthorized)
-			return
-		}
+
+		// CREATE TOKEN
 		token, err := utils.GenerateJWT(uint(user.ID), "user")
 		if err != nil {
 			utils.JSONError(w, "token generation failed", http.StatusInternalServerError)
 			return
 		}
+
+		// CREATE SESSION
 		err = utils.RedisUser.Set(utils.Ctx,
 			"session:user:"+fmt.Sprint(user.ID),
 			token,
@@ -179,22 +192,26 @@ func Login(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-func Logout() http.HandlerFunc {
+func (h *AuthHandler) Logout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// CHECK COOKIE
 		cookie, err := r.Cookie("jwt_token_user")
 		if err != nil {
 			utils.JSONError(w, "no cookie", http.StatusUnauthorized)
 			return
 		}
+
+		// VALIDATE
 		claims, err := middleware.Validate(cookie, "user")
 		if err != nil {
 			utils.JSONError(w, "invalid token", http.StatusUnauthorized)
 			return
 		}
+
+		// REMOVE TOKEN
 		userID := int(claims["id"].(float64))
 		redisKey := fmt.Sprintf("session:user:%d", userID)
 		utils.RedisUser.Del(utils.Ctx, redisKey)
-
 		http.SetCookie(w, &http.Cookie{
 			Name:     "jwt_token_user",
 			Value:    "",
@@ -205,6 +222,7 @@ func Logout() http.HandlerFunc {
 			SameSite: http.SameSiteLaxMode,
 		})
 
+		// RESPONSE
 		utils.JSONResponse(w, utils.Response{
 			Success: true,
 			Message: "logged out",

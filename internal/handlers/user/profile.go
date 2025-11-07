@@ -1,17 +1,24 @@
 package user
 
 import (
+	"encoding/json"
 	"net/http"
 	"rentroom/internal/models"
-	service "rentroom/internal/services"
+	services "rentroom/internal/services/user"
 	"rentroom/middleware"
 	"rentroom/utils"
 	"strings"
-
-	"gorm.io/gorm"
 )
 
-func Get(db *gorm.DB) http.HandlerFunc {
+type ProfileHandler struct {
+	userService *services.UserService
+}
+
+func NewProfileHandler(userService *services.UserService) *ProfileHandler {
+	return &ProfileHandler{userService: userService}
+}
+
+func (h *ProfileHandler) Get() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)
@@ -21,7 +28,7 @@ func Get(db *gorm.DB) http.HandlerFunc {
 		}
 
 		// QUERY
-		user, err := service.GetUser(db, userID)
+		user, err := h.userService.GetByID(userID)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -36,7 +43,7 @@ func Get(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
-func Edit(db *gorm.DB) http.HandlerFunc {
+func (h *ProfileHandler) Edit() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// AUTH
 		userID, err := middleware.MustUserID(r)
@@ -44,18 +51,24 @@ func Edit(db *gorm.DB) http.HandlerFunc {
 			utils.JSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
+
+		// PARSE
 		var req models.UserEditRequest
 		err = utils.BodyChecker(r, &req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
+		// NORMALIZE
 		if req.Username != nil {
 			*req.Username = strings.ToLower(*req.Username)
 		}
 		if req.Email != nil {
 			*req.Email = strings.ToLower(*req.Email)
 		}
+
+		// VALIDATE
 		err = utils.FieldChecker(req)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusBadRequest)
@@ -75,13 +88,16 @@ func Edit(db *gorm.DB) http.HandlerFunc {
 				return
 			}
 		}
-		err = utils.UserUniqueness(db, uint(userID),
-			utils.PtrToStrOrEmpty(req.Username),
-			utils.PtrToStrOrEmpty(req.Email),
-			utils.PtrToStrOrEmpty(req.Phone),
-		)
+
+		//UNIQUE
+		errorsMap, err := h.userService.CheckUniqueness(userID, req.Username, req.Email, req.Phone)
 		if err != nil {
-			utils.JSONError(w, err.Error(), http.StatusBadRequest)
+			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if len(errorsMap) > 0 {
+			b, _ := json.Marshal(errorsMap)
+			utils.JSONError(w, string(b), http.StatusBadRequest)
 			return
 		}
 
@@ -110,16 +126,7 @@ func Edit(db *gorm.DB) http.HandlerFunc {
 		if req.BankNumber != nil {
 			updates["bank_number"] = *req.BankNumber
 		}
-		if len(updates) > 0 {
-			err = db.Model(&models.User{}).
-				Where("id = ?", userID).
-				Updates(updates).Error
-			if err != nil {
-				utils.JSONError(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-		}
-		userUpdated, err := service.GetUser(db, userID)
+		userUpdated, err := h.userService.Update(userID, updates)
 		if err != nil {
 			utils.JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
