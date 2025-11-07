@@ -2,6 +2,8 @@ package router
 
 import (
 	"rentroom/internal/handlers/property"
+	repository "rentroom/internal/repositories/property"
+	service "rentroom/internal/services/property"
 	"rentroom/middleware"
 
 	"github.com/gorilla/mux"
@@ -9,6 +11,11 @@ import (
 )
 
 func RegisterPropertyRoutes(r *mux.Router, db *gorm.DB) {
+	propertyRepo := repository.NewGormPropertyRepository(db)
+	propertyService := service.NewPropertyService(propertyRepo)
+
+	publicHandler := property.NewPublicHandler(propertyService)
+
 	// ADMIN
 	admin := r.PathPrefix("/api/v1/admin/properties").Subrouter()
 	admin.Use(middleware.JwtAuthAdmin)
@@ -31,7 +38,6 @@ func RegisterPropertyRoutes(r *mux.Router, db *gorm.DB) {
 
 	// PUBLIC
 	public := r.PathPrefix("/api/v1/public/properties").Subrouter()
-	public.HandleFunc("", property.PublicList(db)).Methods("GET")
-	public.HandleFunc("/{id}", property.PublicGet(db)).Methods("GET")
-	public.HandleFunc("/{id}/images", property.PublicImageList(db)).Methods("GET")
+	public.HandleFunc("", publicHandler.PublicList()).Methods("GET")
+	public.HandleFunc("/{id}", publicHandler.PublicGet()).Methods("GET")
 }
